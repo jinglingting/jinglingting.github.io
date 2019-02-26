@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.0.0',
+    sidebar: {"position":"right","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false,"dimmer":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="SQL编程 SQL是一种编程语言, 用来解决关系数据库中的相关问题.  SQL编程就是通过SQL语句来解决特定问题的一种编程方式. 本章将介绍MySQL数据库中与SQL编程相关的基础知识, 帮助用户更好地理解MySQL数据库,数据库应用类型,以及与SQL编程相关的特定问题.">
+<meta name="keywords" content="MySQL,MySQL技术内幕">
+<meta property="og:type" content="article">
+<meta property="og:title" content="第一章SQL编程">
+<meta property="og:url" content="http://yoursite.com/2019/02/26/第一章SQL编程/index.html">
+<meta property="og:site_name" content="Jing">
+<meta property="og:description" content="SQL编程 SQL是一种编程语言, 用来解决关系数据库中的相关问题.  SQL编程就是通过SQL语句来解决特定问题的一种编程方式. 本章将介绍MySQL数据库中与SQL编程相关的基础知识, 帮助用户更好地理解MySQL数据库,数据库应用类型,以及与SQL编程相关的特定问题.">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-02-26T11:56:58.318Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="第一章SQL编程">
+<meta name="twitter:description" content="SQL编程 SQL是一种编程语言, 用来解决关系数据库中的相关问题.  SQL编程就是通过SQL语句来解决特定问题的一种编程方式. 本章将介绍MySQL数据库中与SQL编程相关的基础知识, 帮助用户更好地理解MySQL数据库,数据库应用类型,以及与SQL编程相关的特定问题.">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/02/26/第一章SQL编程/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>第一章SQL编程 | Jing</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jing</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">生命不息,折腾不止.</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>Categories</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/26/第一章SQL编程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="jinglingting">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jing">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">第一章SQL编程
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2019-02-26 17:52:25 / Modified: 20:56:58" itemprop="dateCreated datePublished" datetime="2019-02-26T17:52:25+09:00">2019-02-26</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/category/MySQL技术内幕-SQL编程-读书笔记/" itemprop="url" rel="index"><span itemprop="name">MySQL技术内幕-SQL编程-读书笔记</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h4 id="SQL编程"><a href="#SQL编程" class="headerlink" title="SQL编程"></a>SQL编程</h4><ul>
+<li>SQL是一种编程语言, 用来解决关系数据库中的相关问题. </li>
+<li>SQL编程就是通过SQL语句来解决特定问题的一种编程方式.</li>
+<li>本章将介绍MySQL数据库中与SQL编程相关的基础知识, 帮助用户更好地理解MySQL数据库,数据库应用类型,以及与SQL编程相关的特定问题.<a id="more"></a>
+</li>
+</ul>
+<h4 id="1-1-MySQL数据库"><a href="#1-1-MySQL数据库" class="headerlink" title="1.1 MySQL数据库"></a>1.1 MySQL数据库</h4><h5 id="1-1-1-MySQL数据库历史"><a href="#1-1-1-MySQL数据库历史" class="headerlink" title="1.1.1 MySQL数据库历史"></a>1.1.1 MySQL数据库历史</h5><ul>
+<li>三个阶段:<ul>
+<li>初期开源数据库阶段</li>
+<li>Sun MySQL阶段</li>
+<li>Oracle MySQL阶段</li>
+</ul>
+</li>
+</ul>
+<h5 id="1-1-2-MySQL数据库的分支版本"><a href="#1-1-2-MySQL数据库的分支版本" class="headerlink" title="1.1.2 MySQL数据库的分支版本"></a>1.1.2 MySQL数据库的分支版本</h5><ul>
+<li>MariaDB是由MySQL创始人之一的Monty分支的一个版本.</li>
+<li>Drizzle是基于原MySQL6.0代码分支出的一个版本.</li>
+<li>Percona Server是Percona公司分支的一个MySQL数据库版本.</li>
+<li>InnoSQL是姜老师分支的一个MySQL版本.</li>
+</ul>
+<h4 id="1-2-SQL编程"><a href="#1-2-SQL编程" class="headerlink" title="1.2 SQL编程"></a>1.2 SQL编程</h4><ul>
+<li>三个阶段<ol>
+<li>第一阶段是面向过程化的SQL编程阶段</li>
+<li>第二阶段是面向集合的SQL编程阶段</li>
+<li>第三阶段是融合的SQL编程阶段</li>
+</ol>
+</li>
+<li>游标, 临时表, 动态SQL语句???</li>
+</ul>
+<h4 id="1-3-数据库的应用类型"><a href="#1-3-数据库的应用类型" class="headerlink" title="1.3 数据库的应用类型"></a>1.3 数据库的应用类型</h4><ul>
+<li>对于SQL开发人员来说, 必须要了解进行SQL编程的对象类型, 即要开发的数据库应用是哪种类型.</li>
+<li>一般来说, 可将数据库的应用类型分为OLTP和OLAP两种<ul>
+<li>OLTP(Online Transaction Processing, 联机事务处理), 是传统关系型数据库的主要应用.<ul>
+<li>主要面向基本的,日常的事务处理.</li>
+<li>例如:银行交易</li>
+</ul>
+</li>
+<li>OLAP(Online Analysis Processing, 联机分析处理),是数据库仓库系统的主要应用<ul>
+<li>支持复杂的分析操作, 侧重决策处理, 并且提供直观易懂的查询结果</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h5 id="1-3-1-OLTP"><a href="#1-3-1-OLTP" class="headerlink" title="1.3.1 OLTP"></a>1.3.1 OLTP</h5><ul>
+<li>OLTP也被称为面向交易的处理系统, 其基本特征是可以立即将顾客的原始数据传送到计算中心进行处理, 并在很短的时间内给出处理结果.</li>
+<li>这个过程的最大优点是可以即时地处理输入的数据,即时地回答.</li>
+<li>又被称为实时系统(Real Time System)</li>
+<li>衡量OLTP系统的一个重要性能指标是系统性能, 具体体现为实时响应时间(Response Time)</li>
+<li>OLTP数据库通常具有以下特征:<ul>
+<li>支持大量并发用户定期添加和修改数据.</li>
+<li>反映随时变化的单位状态, 但不保存其历史记录.</li>
+<li>包含大量数据, 其中包括用于验证事务的大量数据</li>
+<li>具有复杂的结构</li>
+<li>可以进行优化以对事务活动做出响应.</li>
+<li>提供用于支持单位日常运营的技术基础结构.</li>
+<li>个别事务能够很快地完成, 并且只需要访问相对较少的数据. OLTP系统旨在处理同时输入的成百上千的事务.</li>
+</ul>
+</li>
+</ul>
+<h5 id="1-3-2-OLAP"><a href="#1-3-2-OLAP" class="headerlink" title="1.3.2 OLAP"></a>1.3.2 OLAP</h5><ul>
+<li>OLAP是一种用于组织大型商务数据库和支持商务智能的技术.</li>
+<li>OLAP数据库分为一个或多个多维数据集, 每个多维数据集都由多维数据集管理员组织和设计,以适应用户检索和分析数据的方式, 从而更易于创建和使用所需的数据透视表和数据透视图.</li>
+<li>OLAP是共享多维信息的, 针对特定问题的联机数据访问和分析的快速软件技术.</li>
+<li>OLAP专门用于支持复杂的分析操作, 侧重对决策人员和高层管理人员的决策支持</li>
+<li>OLAP的主要特点是直接仿照用户的多角度思考模式, 预先为用户创建多维的数据模型</li>
+<li>OLAP的基本概念<ul>
+<li>维(Dimension): 是用户观察数据的特定角度,是问题的一类属性, 属性集合构成一个维(时间维, 地理维等).</li>
+<li>维的层次(Level): 用户观察数据的某个特定角度(即某个维)还可能存在细节程序不同的各个描述方面(时间维包括日期,年份,季度,年).</li>
+<li>维的成员(Member):即维的一个取值,是数据项在某个维中位置的描述,如:”某年某月某日”是在时间维上的位置描述</li>
+<li>度量(Measure): 多维数组的取值</li>
+</ul>
+</li>
+<li>OLAP的基本多维分析操作有钻取(Drill-up和Drill-down), 切片(Slice)和切块(Dice)以及旋转(Pivot)等<ul>
+<li>钻取:改变维的层次, 变换分析的粒度.它包括向下钻取(Drill-down)和向上钻取(Drill-up)/上滚(Roll-up).<ul>
+<li>向上钻取是在某一维上将低层次的细节数据概括到高层次的汇总数据,或者减少维数;</li>
+<li>向下钻取则相反, 从汇总数据深入到细节数据进行观察或增加新维</li>
+</ul>
+</li>
+<li>切片和切块:在一部分维上选定值后, 关心度量数据在剩余维上的分布.<ul>
+<li>如果剩余的维只有两个, 则是切片;</li>
+<li>如果有三个或以上, 则是切块</li>
+</ul>
+</li>
+<li>旋转:变换维的方向, 即在表格中重新安排维的位置(如行列互换)</li>
+</ul>
+</li>
+</ul>
+<h5 id="1-3-3-OLTP与OLAP的比较"><a href="#1-3-3-OLTP与OLAP的比较" class="headerlink" title="1.3.3 OLTP与OLAP的比较"></a>1.3.3 OLTP与OLAP的比较</h5><ul>
+<li>OLTP主要执行基本的,日常的事务处理.</li>
+<li>OLTP的特点一般有:<ul>
+<li>实时性要求高</li>
+<li>查询的数据量不是很大.</li>
+<li>交易一般是确定的, 所以OLTP是对确定性的数据进行存取</li>
+<li>并发性要求高, 而且严格要求事务的完整性,安全性</li>
+</ul>
+</li>
+<li>OLAP是数据仓库系统的主要应用, 其典型的应用就是复杂的动态报表系统.</li>
+<li>OLAP的特点一般有:<ul>
+<li>实时性要求不是很高, 很多应用最多每天更新一次数据.</li>
+<li>数据量大. 因为OLAP支持的是动态查询, 用户要通过对很多数据的统计才能得到想要知道的信息,如时间序列分析等,所以处理的数据量很大.</li>
+<li>因为重点在于决策支持, 所以一般查询是动态的,也就是说允许用户随时提出查询的要求.</li>
+</ul>
+</li>
+<li>OLTP和OLAP的主要却别如下表:</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>区别</th>
+<th>OLTP</th>
+<th>OLAP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>用户</td>
+<td>操作人员</td>
+<td>决策人员</td>
+</tr>
+<tr>
+<td>功能</td>
+<td>日常操作处理</td>
+<td>分析决策</td>
+</tr>
+<tr>
+<td>DB设计</td>
+<td>面向应用</td>
+<td>面向主题</td>
+</tr>
+<tr>
+<td>数据</td>
+<td>当前的,最新的</td>
+<td>历史的,聚合的</td>
+</tr>
+<tr>
+<td>存取</td>
+<td>读/写数十条记录</td>
+<td>读上百万的数据</td>
+</tr>
+<tr>
+<td>工作单位</td>
+<td>简单的事务</td>
+<td>复杂的查询</td>
+</tr>
+<tr>
+<td>用户数</td>
+<td>上千个</td>
+<td>上百个</td>
+</tr>
+<tr>
+<td>DB大小</td>
+<td>一般小于500GB</td>
+<td>大于1TB</td>
+</tr>
+</tbody>
+</table>
+<h5 id="1-3-4-MySQL存储引擎及其面向的数据库应用"><a href="#1-3-4-MySQL存储引擎及其面向的数据库应用" class="headerlink" title="1.3.4 MySQL存储引擎及其面向的数据库应用"></a>1.3.4 MySQL存储引擎及其面向的数据库应用</h5><ul>
+<li>MySQL数据库的体系结构, 由以下几个部分组成<ul>
+<li>连接池组件(Connection Pool)</li>
+<li>管理服务和工具组件(Management Services &amp; Utilities)</li>
+<li>SQL接口组件(SQL Interface)</li>
+<li>查询分析器组件(Parser)</li>
+<li>优化器组件(Optimizer)</li>
+<li>缓冲组件(Caches &amp; Buffers)</li>
+<li>插件式存储引擎(Pluggable Storage Engines)</li>
+<li>物理文件(File System)</li>
+</ul>
+</li>
+<li>MySQL数据库中常用的存储引擎以及它们面向的数据库应用<ul>
+<li>InnoDB存储引擎: 支持事务,其设计目标主要面向OLTP应用.<ul>
+<li>其特点是行锁设计,支持外键,并支持类似Oracle的非锁定读,即默认读取操作不会产生锁.</li>
+<li>InnoDB存储引擎将数据放在一个逻辑的表空间中,可以将每个InnoDB存储引擎的表单独存放到一个独立的ibd文件中</li>
+<li>InnoDB存储引擎支持将裸设备(row disk)用于建立其表空间</li>
+<li>通过使用多版本并发控制(MVCC)来获得高并发性</li>
+<li>实现了SQL标准的4种隔离级别, 默认为REPEATABLE级别.</li>
+<li>使用next-key locking的策略来避免幻读(phantom)现象的产生.</li>
+<li>提供了插入缓冲(insert buffer), 二次写(double write), 自适应哈希索引(adaptive hash index), 预读(read ahead)等高性能和高可用的功能</li>
+<li>对于表中的数据存储,InnoDB存储引擎采用了聚集(clustered)的方式.每张表按照主键的顺序进行存储.<ul>
+<li>如果没有显式地在表定义时指定主键,InnoDB存储引擎会为每一行生成一个6字节的ROWID, 并以此作为主键</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>MyISAM存储引擎:不支持事务, 表锁设计, 支持全文索引, 主要面向一些OLAP数据库应用<ul>
+<li>缓冲池只缓存(cache)索引文件, 而不缓存数据文件</li>
+</ul>
+</li>
+<li>NDB存储引擎:是一个高可用, 高性能, 高可扩展的数据库集群存储引擎,其面向也是OLTP的数据库应用类型<ul>
+<li>结构是share nothing集群架构,因此能提供更高级别的高可用性</li>
+<li>数据全部放在内存中(可以将非索引数据放在磁盘上), 因此主键查找(primary key lookups)的速度极快</li>
+<li>能够在线添加NDB数据存储节点(data node)以便线性地提高数据库性能</li>
+</ul>
+</li>
+<li>Memory存储引擎: 数据都存放在内存中<ul>
+<li>非常适合于存储OLTP数据库应用中临时数据的临时表</li>
+<li>也可以作为OLAP数据库应用中数据仓库的维度表</li>
+<li>默认使用哈希索引而不是通常熟悉的B+树索引</li>
+</ul>
+</li>
+<li>Infobright存储引擎: 第三方的存储引擎.<ul>
+<li>特点是存储是按照列而非行的,因此非常适合OLAP的数据库应用</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="1-4-图形化的SQL查询分析器"><a href="#1-4-图形化的SQL查询分析器" class="headerlink" title="1.4 图形化的SQL查询分析器"></a>1.4 图形化的SQL查询分析器</h4><h5 id="1-4-1-MySQL-Workbench"><a href="#1-4-1-MySQL-Workbench" class="headerlink" title="1.4.1 MySQL Workbench"></a>1.4.1 MySQL Workbench</h5><ul>
+<li>开源, 免费, 阔平台</li>
+<li>主要功能:<ul>
+<li>SQL查询分析</li>
+<li>数据库建模</li>
+<li>数据库管理监控</li>
+</ul>
+</li>
+</ul>
+<h5 id="1-4-2-Toad-for-MySQL"><a href="#1-4-2-Toad-for-MySQL" class="headerlink" title="1.4.2 Toad for MySQL"></a>1.4.2 Toad for MySQL</h5><ul>
+<li>只支持windows系统</li>
+</ul>
+<h5 id="1-4-3-iMySQL-Front"><a href="#1-4-3-iMySQL-Front" class="headerlink" title="1.4.3 iMySQL-Front"></a>1.4.3 iMySQL-Front</h5><ul>
+<li>开源, 跨平台</li>
+</ul>
+<h4 id="1-5-小结"><a href="#1-5-小结" class="headerlink" title="1.5 小结"></a>1.5 小结</h4><ul>
+<li>MySQL数据库所经历的三个阶段: 初期开源数据库阶段, Sun MySQL阶段, Oracle MySQL阶段</li>
+<li>MySQL数据库独有的插件式存储引擎</li>
+<li>常用的MySQL图形化查询分析器</li>
+</ul>
+<h5 id="总感觉在抄课本…"><a href="#总感觉在抄课本…" class="headerlink" title="总感觉在抄课本…"></a>总感觉在抄课本…</h5>
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/MySQL/" rel="tag"># MySQL</a>
+          
+            <a href="/tags/MySQL技术内幕/" rel="tag"># MySQL技术内幕</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/02/25/pythonhigh-1/" rel="next" title="python各类型所占内存大小">
+                <i class="fa fa-chevron-left"></i> python各类型所占内存大小
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">jinglingting</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">4</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">3</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">3</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#SQL编程"><span class="nav-text">SQL编程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-MySQL数据库"><span class="nav-text">1.1 MySQL数据库</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-1-1-MySQL数据库历史"><span class="nav-text">1.1.1 MySQL数据库历史</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-1-2-MySQL数据库的分支版本"><span class="nav-text">1.1.2 MySQL数据库的分支版本</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-SQL编程"><span class="nav-text">1.2 SQL编程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-数据库的应用类型"><span class="nav-text">1.3 数据库的应用类型</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-3-1-OLTP"><span class="nav-text">1.3.1 OLTP</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-3-2-OLAP"><span class="nav-text">1.3.2 OLAP</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-3-3-OLTP与OLAP的比较"><span class="nav-text">1.3.3 OLTP与OLAP的比较</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-3-4-MySQL存储引擎及其面向的数据库应用"><span class="nav-text">1.3.4 MySQL存储引擎及其面向的数据库应用</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-4-图形化的SQL查询分析器"><span class="nav-text">1.4 图形化的SQL查询分析器</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-4-1-MySQL-Workbench"><span class="nav-text">1.4.1 MySQL Workbench</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-4-2-Toad-for-MySQL"><span class="nav-text">1.4.2 Toad for MySQL</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-4-3-iMySQL-Front"><span class="nav-text">1.4.3 iMySQL-Front</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-5-小结"><span class="nav-text">1.5 小结</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#总感觉在抄课本…"><span class="nav-text">总感觉在抄课本…</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">jinglingting</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.0.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+  
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
