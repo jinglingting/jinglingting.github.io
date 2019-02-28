@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.0.0',
+    sidebar: {"position":"right","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false,"dimmer":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="2.5 数字类型">
+<meta name="keywords" content="MySQL,MySQL技术内幕">
+<meta property="og:type" content="article">
+<meta property="og:title" content="第二章数据类型5-8">
+<meta property="og:url" content="http://yoursite.com/2019/02/28/MySQL技术内幕:SQL编程/第二章数据类型5-8/index.html">
+<meta property="og:site_name" content="Jing">
+<meta property="og:description" content="2.5 数字类型">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-02-28T10:21:11.176Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="第二章数据类型5-8">
+<meta name="twitter:description" content="2.5 数字类型">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/02/28/MySQL技术内幕:SQL编程/第二章数据类型5-8/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>第二章数据类型5-8 | Jing</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jing</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">生命不息,折腾不止.</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>Categories</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/28/MySQL技术内幕:SQL编程/第二章数据类型5-8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="jinglingting">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jing">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">第二章数据类型5-8
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2019-02-28 17:48:20 / Modified: 19:21:11" itemprop="dateCreated datePublished" datetime="2019-02-28T17:48:20+09:00">2019-02-28</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/category/MySQL技术内幕-SQL编程-读书笔记/" itemprop="url" rel="index"><span itemprop="name">MySQL技术内幕:SQL编程-读书笔记</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h4 id="2-5-数字类型"><a href="#2-5-数字类型" class="headerlink" title="2.5 数字类型"></a>2.5 数字类型</h4><a id="more"></a>
+<h5 id="2-5-1-整型"><a href="#2-5-1-整型" class="headerlink" title="2.5.1 整型"></a>2.5.1 整型</h5><ul>
+<li>mysql数据库支持sql标准支持的整型类型:int, smallint. 此外mysql数据库也支持诸如tinyint, mediumint, bigint等类型</li>
+<li><p>各种整型占用的存储空间以及取值范围<br>  类型| 占用空间(字节) | 最小值(signed/unsigned) | 最大值(signed/unsigned)<br>  —| —| — | —<br>  tinyint | 1 | -128/0 | 127/255<br>  smallint | 2 | -32768/0 | 32767/65535<br>  mediumint | 3 | -8388608/0 | 8388607/16777215<br>  int | 4 | -2147483647/0 | 2147483647/4294967295<br>  bigint | 8 | ../0 | ../..</p>
+</li>
+<li><p>zerofill属性, 一旦启用zerofill属性, mysql数据库为列自动添加unsigned属性</p>
+</li>
+</ul>
+<h5 id="2-5-2-浮点型-非精确型"><a href="#2-5-2-浮点型-非精确型" class="headerlink" title="2.5.2 浮点型(非精确型)"></a>2.5.2 浮点型(非精确型)</h5><ul>
+<li>mysql数据库支持两种浮点类型: 单精度的float类型和双精度的double precision类型.</li>
+<li>这两种都是非精确的类型, 经过一些操作后并不能保证运算的正确性,例如:M*G/G不一定等于M.</li>
+<li>float类型用于表示近似数值数据类型. SQL标准允许在关键字float后面的括号内用位来指定精度(但不能为指数范围)</li>
+<li>为了保证最大的可移植性, 需要使用近似数据存储的代码,使用float或double precision, 并不规定精度或位数</li>
+</ul>
+<h5 id="2-5-3-高精度类型"><a href="#2-5-3-高精度类型" class="headerlink" title="2.5.3 高精度类型"></a>2.5.3 高精度类型</h5><ul>
+<li>decimal 和 numeric类型在MySQL中被视为相同的类型,用于保存必须为确切精度的值</li>
+<li>对于工资数据类型, 当声明类型的列时,可以(并且通常必须)指定精度和标度.例如: salary decimal(5,2)<ul>
+<li>5是精度, 2是标度. 精度表示保存值的主要位数, 标度表示小数点后面可以保存的位数</li>
+</ul>
+</li>
+<li>decimal或numeric的最大位数是65, 但是具体的decimal或numeric列的实际范围受具体列的精度或标度约束</li>
+</ul>
+<h5 id="2-5-4-位类型"><a href="#2-5-4-位类型" class="headerlink" title="2.5.4 位类型"></a>2.5.4 位类型</h5><ul>
+<li>位类型,即BIT数据类型可用来保存位字段的值.</li>
+<li>BIT(M)类型表示允许存储M位数值, M范围为1到64, 占用空间为(M+7)/8字节.</li>
+<li>如果为BIT(M)列分配的值的长度小于M位, 在值的左边用0填充<ul>
+<li>例如, 为bit(6)列分配一个值b’101’, 其效果与分配b’000101’相同</li>
+</ul>
+</li>
+<li>要指定位值, 可以使用b’value’符</li>
+<li><p>示例:</p>
+  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">MariaDB [test]&gt; create table bitable(a bit(4));</span><br><span class="line">Query OK, 0 rows affected (0.013 sec)</span><br><span class="line"></span><br><span class="line">MariaDB [test]&gt; insert into bitable values(b'1000');</span><br><span class="line">Query OK, 1 row affected (0.004 sec)</span><br><span class="line"></span><br><span class="line">MariaDB [test]&gt; select * from bitable;</span><br><span class="line">+<span class="comment">------+</span></span><br><span class="line">| a    |</span><br><span class="line">+<span class="comment">------+</span></span><br><span class="line">|    |</span><br><span class="line">+<span class="comment">------+</span></span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">0.001</span> sec)</span><br><span class="line"></span><br><span class="line">MariaDB [<span class="keyword">test</span>]&gt; <span class="keyword">select</span> <span class="keyword">hex</span>(a) <span class="keyword">from</span> bitable;</span><br><span class="line">+<span class="comment">--------+</span></span><br><span class="line">| hex(a) |</span><br><span class="line">+<span class="comment">--------+</span></span><br><span class="line">| 8      |</span><br><span class="line">+<span class="comment">--------+</span></span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">0.001</span> sec)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>因为采用位的存储方式, 所以不能直接查看, 可能需要做类似hex的转化:</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-6-关于数字的经典SQL编程问题"><a href="#2-6-关于数字的经典SQL编程问题" class="headerlink" title="2.6 关于数字的经典SQL编程问题"></a>2.6 关于数字的经典SQL编程问题</h4><h5 id="2-6-1-数字辅助表"><a href="#2-6-1-数字辅助表" class="headerlink" title="2.6.1 数字辅助表"></a>2.6.1 数字辅助表</h5><ul>
+<li>数字辅助表是一个只包含从1到N的N个整数的简单表,N通常很大.</li>
+<li>建议创建一个持久的数字辅助表,并根据需要填充一定数据量的值.</li>
+<li><p>一般的SQL编程人员想到的方法</p>
+  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">MariaDB [test]&gt; create table Nums(</span><br><span class="line">    -&gt;     a int unsigned not null primary key</span><br><span class="line">    -&gt; )engine=innodb;</span><br><span class="line">Query OK, 0 rows affected (0.012 sec)</span><br><span class="line"></span><br><span class="line">MariaDB [test]&gt; delimiter ;</span><br><span class="line">MariaDB [test]&gt; delimiter $$</span><br><span class="line">MariaDB [test]&gt; create procedure pCreateNums(cnt int unsigned)</span><br><span class="line">    -&gt; begin</span><br><span class="line">    -&gt;     declare s int unsigned default 1;</span><br><span class="line">    -&gt;     truncate table Nums;</span><br><span class="line">    -&gt;     while s &lt;= cnt do</span><br><span class="line">    -&gt;         begin</span><br><span class="line">    -&gt;             insert into Nums select s;</span><br><span class="line">    -&gt;             set s = s+1;</span><br><span class="line">    -&gt;         end;</span><br><span class="line">    -&gt;     end while;</span><br><span class="line">    -&gt; end$$</span><br><span class="line">Query OK, 0 rows affected (0.002 sec)</span><br><span class="line"></span><br><span class="line">MariaDB [test]&gt; delimiter ;</span><br><span class="line"></span><br><span class="line">MariaDB [test]&gt; call pCreateNums(100000);</span><br><span class="line">Query OK, 100000 rows affected (2 min 27.462 sec)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>这种方法效率可以完成任务,但是效率不高.</li>
+<li>这个方法的开销主要在于insert语句被执行了100000次.</li>
+</ul>
+</li>
+<li><p>改进方法</p>
+  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">MariaDB [test]&gt; delimiter $$</span><br><span class="line">MariaDB [test]&gt; create procedure pFastCreateNums(cnt int unsigned)</span><br><span class="line">    -&gt; begin</span><br><span class="line">    -&gt;     declare s int unsigned default 1;</span><br><span class="line">    -&gt;     truncate table Nums;</span><br><span class="line">    -&gt;     insert into Nums select s;</span><br><span class="line">    -&gt;     while s*2 &lt;= cnt do</span><br><span class="line">    -&gt;         begin</span><br><span class="line">    -&gt;             insert into Nums select a+s from Nums;</span><br><span class="line">    -&gt;             set s = s*2;</span><br><span class="line">    -&gt;         end;</span><br><span class="line">    -&gt;     end while;</span><br><span class="line">    -&gt; end$$</span><br><span class="line">Query OK, 0 rows affected (0.004 sec)</span><br><span class="line"></span><br><span class="line">MariaDB [test]&gt; delimiter ;</span><br><span class="line"></span><br><span class="line">MariaDB [test]&gt; call pFastCreateNums(100000);</span><br><span class="line">Query OK, 65536 rows affected (0.376 sec)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>在这个存储过程中, 变量s保存插入该表的行数.</li>
+<li>该过程先把1插入数字辅助表, 然后 <code>s*2&lt;=cnt</code> 成立时执行循环.</li>
+<li>在每次迭代中,该过程把数字辅助表当前所有行的值加上s后再插入数字辅助表中.</li>
+<li>即先插入{1}, 然后是{2},{3,4},{5,6,7,8},以此类推.</li>
+<li>该方法是按照2的指数次进行插入的,因此上述实际的插入行数不是设定的值<ul>
+<li>可以在取出数据时使用 <code>&lt;=</code> 来截取指定的行数</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>数字辅助表,用户可以通过它来辅助很多其他应用.<ul>
+<li>例如在数据仓库中,通常需要生成某个时间范围内的时间维度表,这是使用数字辅助表会非常简单和快捷.  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">delimiter $$</span><br><span class="line"><span class="keyword">create</span> <span class="keyword">procedure</span> pCreateDimTime(<span class="keyword">start</span> <span class="built_in">date</span>, <span class="keyword">end</span> <span class="built_in">date</span>)</span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line">    <span class="keyword">select</span> <span class="keyword">date_add</span>(<span class="keyword">start</span>, <span class="built_in">interval</span> a<span class="number">-1</span> <span class="keyword">day</span>)</span><br><span class="line">    <span class="keyword">from</span> Nums <span class="keyword">where</span> a&lt;=<span class="keyword">datediff</span>(<span class="keyword">end</span>, <span class="keyword">start</span>)+<span class="number">1</span>;</span><br><span class="line"><span class="keyword">end</span>;</span><br><span class="line">delimiter ;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<h5 id="2-6-2-连续范围问题"><a href="#2-6-2-连续范围问题" class="headerlink" title="2.6.2 连续范围问题"></a>2.6.2 连续范围问题</h5><ul>
+<li>连续范围问题也是一个非常经典的SQL编程问题</li>
+<li><p>创建一些测试数据</p>
+  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> t(</span><br><span class="line">    a <span class="built_in">int</span> <span class="keyword">unsigned</span> <span class="keyword">not</span> <span class="literal">null</span> primary <span class="keyword">key</span></span><br><span class="line">)<span class="keyword">engine</span>=<span class="keyword">innodb</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> t <span class="keyword">values</span>(<span class="number">1</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> t <span class="keyword">values</span>(<span class="number">2</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> t <span class="keyword">values</span>(<span class="number">3</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> t <span class="keyword">values</span>(<span class="number">100</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> t <span class="keyword">values</span>(<span class="number">101</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> t <span class="keyword">values</span>(<span class="number">103</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> t <span class="keyword">values</span>(<span class="number">104</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> t <span class="keyword">values</span>(<span class="number">105</span>);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>添加一列计算出来的行号</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">MariaDB [test]&gt; select a, @r:=@r+1 rn from t,(select @r:=0) as a;</span><br><span class="line">+-----+------+</span><br><span class="line">| a   | rn   |</span><br><span class="line">+-----+------+</span><br><span class="line">|   1 |    1 |</span><br><span class="line">|   2 |    2 |</span><br><span class="line">|   3 |    3 |</span><br><span class="line">| 100 |    4 |</span><br><span class="line">| 101 |    5 |</span><br><span class="line">| 103 |    6 |</span><br><span class="line">| 104 |    7 |</span><br><span class="line">| 105 |    8 |</span><br><span class="line">+-----+------+</span><br><span class="line">8 rows in set (0.001 sec)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>两者相减效果</p>
+  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">MariaDB [test]&gt; select a,rn,a-rn from(select a, @r:=@r+1 rn from t,(select @r:=0) as a) as b;</span><br><span class="line">+<span class="comment">-----+------+------+</span></span><br><span class="line">| a   | rn   | a-rn |</span><br><span class="line">+<span class="comment">-----+------+------+</span></span><br><span class="line">|   1 |    1 |    0 |</span><br><span class="line">|   2 |    2 |    0 |</span><br><span class="line">|   3 |    3 |    0 |</span><br><span class="line">| 100 |    4 |   96 |</span><br><span class="line">| 101 |    5 |   96 |</span><br><span class="line">| 103 |    6 |   97 |</span><br><span class="line">| 104 |    7 |   97 |</span><br><span class="line">| 105 |    8 |   97 |</span><br><span class="line">+<span class="comment">-----+------+------+</span></span><br><span class="line">8 rows in <span class="keyword">set</span> (<span class="number">0.001</span> sec)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>在同一个连续值内, 连续数值的差是一个常量,因为组内没有间断.</li>
+<li>当出现一个新组时,其列号和行号之间的差值开始增大.</li>
+<li>所以对于连续范围的统计,可以根据差值进行分组统计.</li>
+</ul>
+</li>
+<li>分组统计  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">MariaDB [test]&gt; select min(a) start_range, max(a) end_range</span><br><span class="line">    -&gt; from</span><br><span class="line">    -&gt; (</span><br><span class="line">    -&gt;     select a,rn,a-rn as diff</span><br><span class="line">    -&gt;     from</span><br><span class="line">    -&gt;     (</span><br><span class="line">    -&gt;         select a, @r:=@r+1 rn</span><br><span class="line">    -&gt;         from</span><br><span class="line">    -&gt;             t,(select @r:=0) as a</span><br><span class="line">    -&gt;     ) as b</span><br><span class="line">    -&gt; ) as c</span><br><span class="line">    -&gt; group by diff;</span><br><span class="line">+<span class="comment">-------------+-----------+</span></span><br><span class="line">| start_range | end_range |</span><br><span class="line">+<span class="comment">-------------+-----------+</span></span><br><span class="line">|           1 |         3 |</span><br><span class="line">|         100 |       101 |</span><br><span class="line">|         103 |       105 |</span><br><span class="line">+<span class="comment">-------------+-----------+</span></span><br><span class="line">3 rows in <span class="keyword">set</span> (<span class="number">0.001</span> sec)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="2-7-字符类型"><a href="#2-7-字符类型" class="headerlink" title="2.7 字符类型"></a>2.7 字符类型</h4><h5 id="2-7-1-字符集"><a href="#2-7-1-字符集" class="headerlink" title="2.7.1 字符集"></a>2.7.1 字符集</h5><ul>
+<li><p>通过 <code>show charset</code> 可以查看MySQL数据库支持的字符集</p>
+  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">MariaDB [test]&gt; show charset;</span><br><span class="line">+<span class="comment">----------+-----------------------------+---------------------+--------+</span></span><br><span class="line">| Charset  | Description                 | Default collation   | Maxlen |</span><br><span class="line">+<span class="comment">----------+-----------------------------+---------------------+--------+</span></span><br><span class="line">| big5     | Big5 Traditional Chinese    | big5_chinese_ci     |      2 |</span><br><span class="line">| dec8     | DEC West European           | dec8_swedish_ci     |      1 |</span><br><span class="line">| cp850    | DOS West European           | cp850_general_ci    |      1 |</span><br><span class="line">| hp8      | HP West European            | hp8_english_ci      |      1 |</span><br><span class="line">| koi8r    | KOI8-R Relcom Russian       | koi8r_general_ci    |      1 |</span><br><span class="line">| latin1   | cp1252 West European        | latin1_swedish_ci   |      1 |</span><br><span class="line">| latin2   | ISO 8859-2 Central European | latin2_general_ci   |      1 |</span><br><span class="line">| swe7     | 7bit Swedish                | swe7_swedish_ci     |      1 |</span><br><span class="line">| ascii    | US ASCII                    | ascii_general_ci    |      1 |</span><br><span class="line">| ujis     | EUC-JP Japanese             | ujis_japanese_ci    |      3 |</span><br><span class="line">| sjis     | Shift-JIS Japanese          | sjis_japanese_ci    |      2 |</span><br><span class="line">| hebrew   | ISO 8859-8 Hebrew           | hebrew_general_ci   |      1 |</span><br><span class="line">| tis620   | TIS620 Thai                 | tis620_thai_ci      |      1 |</span><br><span class="line">| euckr    | EUC-KR Korean               | euckr_korean_ci     |      2 |</span><br><span class="line">| koi8u    | KOI8-U Ukrainian            | koi8u_general_ci    |      1 |</span><br><span class="line">| gb2312   | GB2312 Simplified Chinese   | gb2312_chinese_ci   |      2 |</span><br><span class="line">| greek    | ISO 8859-7 Greek            | greek_general_ci    |      1 |</span><br><span class="line">| cp1250   | Windows Central European    | cp1250_general_ci   |      1 |</span><br><span class="line">| gbk      | GBK Simplified Chinese      | gbk_chinese_ci      |      2 |</span><br><span class="line">| latin5   | ISO 8859-9 Turkish          | latin5_turkish_ci   |      1 |</span><br><span class="line">| armscii8 | ARMSCII-8 Armenian          | armscii8_general_ci |      1 |</span><br><span class="line">| utf8     | UTF-8 Unicode               | utf8_general_ci     |      3 |</span><br><span class="line">| ucs2     | UCS-2 Unicode               | ucs2_general_ci     |      2 |</span><br><span class="line">| cp866    | DOS Russian                 | cp866_general_ci    |      1 |</span><br><span class="line">| keybcs2  | DOS Kamenicky Czech-Slovak  | keybcs2_general_ci  |      1 |</span><br><span class="line">| macce    | Mac Central European        | macce_general_ci    |      1 |</span><br><span class="line">| macroman | Mac West European           | macroman_general_ci |      1 |</span><br><span class="line">| cp852    | DOS Central European        | cp852_general_ci    |      1 |</span><br><span class="line">| latin7   | ISO 8859-13 Baltic          | latin7_general_ci   |      1 |</span><br><span class="line">| utf8mb4  | UTF-8 Unicode               | utf8mb4_general_ci  |      4 |</span><br><span class="line">| cp1251   | Windows Cyrillic            | cp1251_general_ci   |      1 |</span><br><span class="line">| utf16    | UTF-16 Unicode              | utf16_general_ci    |      4 |</span><br><span class="line">| utf16le  | UTF-16LE Unicode            | utf16le_general_ci  |      4 |</span><br><span class="line">| cp1256   | Windows Arabic              | cp1256_general_ci   |      1 |</span><br><span class="line">| cp1257   | Windows Baltic              | cp1257_general_ci   |      1 |</span><br><span class="line">| utf32    | UTF-32 Unicode              | utf32_general_ci    |      4 |</span><br><span class="line">| binary   | Binary pseudo charset       | binary              |      1 |</span><br><span class="line">| geostd8  | GEOSTD8 Georgian            | geostd8_general_ci  |      1 |</span><br><span class="line">| cp932    | SJIS for Windows Japanese   | cp932_japanese_ci   |      2 |</span><br><span class="line">| eucjpms  | UJIS for Windows Japanese   | eucjpms_japanese_ci |      3 |</span><br><span class="line">+<span class="comment">----------+-----------------------------+---------------------+--------+</span></span><br><span class="line">40 rows in <span class="keyword">set</span> (<span class="number">0.001</span> sec)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>第一咧是字符集的名称, 第三咧是排序规则, 最后一列代表这个字符集的1个字符可能占用的最大字节空间,单位是字节(Byte)</li>
+</ul>
+</li>
+<li>Unicode和utf8的区别<ul>
+<li>Unicode是字符编码, 不是字符集<ul>
+<li>Unicode是国际组织制定的可以容纳世界上所有文字和符号的字符编码方案.</li>
+<li>Unicode用数字0~0x10FFFF来映射这些字符,最多可以容纳1114112个字符,或者说是1114112个码位. 码位就是可以分配给字符的数字.</li>
+</ul>
+</li>
+<li>utf8, utf16, utf32都是将数字转换到程序数据的编码方案.</li>
+</ul>
+</li>
+<li>对于Unicode编码的字符集,强烈建议将所有的char字段设置为varchar字段,因为对于char字段,数据库会保存最大可能的字节数.</li>
+<li><p>查看当前使用的字符集, 可以使用status命令:</p>
+  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">MariaDB [test]&gt; status</span><br><span class="line"><span class="comment">--------------</span></span><br><span class="line">mysql  Ver 15.1 Distrib 10.3.12-MariaDB, for Linux (x86_64) using readline 5.1</span><br><span class="line"></span><br><span class="line">Connection id:          8</span><br><span class="line">Current database:       test</span><br><span class="line">Current user:           root@localhost</span><br><span class="line">SSL:                    Not in <span class="keyword">use</span></span><br><span class="line"><span class="keyword">Current</span> pager:          <span class="keyword">less</span></span><br><span class="line"><span class="keyword">Using</span> <span class="keyword">outfile</span>:          <span class="string">''</span></span><br><span class="line"><span class="keyword">Using</span> delimiter:        ;</span><br><span class="line">Server:                 MariaDB</span><br><span class="line">Server version:         10.3.12-MariaDB-log Source distribution</span><br><span class="line">Protocol version:       10</span><br><span class="line">Connection:             Localhost via UNIX socket</span><br><span class="line">Server characterset:    utf8mb4</span><br><span class="line">Db     characterset:    utf8mb4</span><br><span class="line">Client characterset:    utf8</span><br><span class="line">Conn.  characterset:    utf8</span><br><span class="line">UNIX socket:            /run/mysqld/mysqld.sock</span><br><span class="line">Uptime:                 4 hours 18 min 15 sec</span><br><span class="line"></span><br><span class="line">Threads: 7  Questions: 300121  Slow queries: 1  Opens: 30  <span class="keyword">Flush</span> <span class="keyword">tables</span>: <span class="number">1</span>  <span class="keyword">Open</span> <span class="keyword">tables</span>: <span class="number">23</span>  Queries per <span class="keyword">second</span> <span class="keyword">avg</span>: <span class="number">19.368</span></span><br><span class="line"><span class="comment">--------------</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>命令 set names 可以用来更改当前会话连接的字符集,当前会话的客户端的字符集以及当前会话返回结果的字符集.</p>
+<ul>
+<li><code>set names &#39;gbk&#39;</code></li>
+</ul>
+</li>
+<li>MySQL可以细化每个对象字符集的设置.</li>
+<li>SQL标准支持nchar类型(即National Character Set),在MySQL数据库中使用utf8来表示这种类型.</li>
+</ul>
+<h5 id="2-7-2-排序规则"><a href="#2-7-2-排序规则" class="headerlink" title="2.7.2 排序规则"></a>2.7.2 排序规则</h5><ul>
+<li>排序规则(Collation)是指对指定字符集下不同字符的比较规则.其特征有以下几点:<ul>
+<li>两个不同的字符集不能有相同的排序规则.</li>
+<li>每个字符集有一个默认的排序规则</li>
+<li>有一些常用的命名规则. 如<code>_ci</code>结果表示大小写不敏感, <code>_cs</code>表示大小写敏感,<code>_bin</code>表示二进制的比较</li>
+</ul>
+</li>
+<li>在MySQL数据库中,可以通过命令show collation来查看支持的各种排序规则,也可以通过information_schema架构下的collations来查看<ul>
+<li><code>select collation_name, character_set_name from collations\G</code></li>
+<li><code>show collation like &#39;gbk%&#39;;</code></li>
+</ul>
+</li>
+<li><p>在前面通过show charset可以看到都是<code>_ci</code>结尾的,也就是默认的排序规则是大小写不敏感</p>
+  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">MariaDB [information_schema]&gt; select 'a'= 'A';</span><br><span class="line">+<span class="comment">----------+</span></span><br><span class="line">| 'a'= 'A' |</span><br><span class="line">+<span class="comment">----------+</span></span><br><span class="line">|        1 |</span><br><span class="line">+<span class="comment">----------+</span></span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">0.000</span> sec)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>如果需要更改当前会话的排序规则, 可以通过命令 <code>set names ... collate ...</code> 来实现</p>
+  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">MariaDB [information_schema]&gt; set names utf8mb4 collate utf8mb4_bin;</span><br><span class="line">Query OK, 0 rows affected (0.000 sec)</span><br><span class="line"></span><br><span class="line">MariaDB [information_schema]&gt; select 'a'='A';</span><br><span class="line">+<span class="comment">---------+</span></span><br><span class="line">| 'a'='A' |</span><br><span class="line">+<span class="comment">---------+</span></span><br><span class="line">|       0 |</span><br><span class="line">+<span class="comment">---------+</span></span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">0.000</span> sec)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>可以通过alter table r modify column … collate xxx_bin;来更改该列是否区分大小写</p>
+</li>
+<li>大小写敏感的需求要视应用程序的需求而定,并不总是要求区分大小写字符.<ul>
+<li>例如对于用户信息表,可能希望在用户注册时不要区分大小写,因为如果区分大小写,那么一个用户可以注册为David,另一个用户可以注册为david,并不是想要的情况</li>
+</ul>
+</li>
+<li>排序规则不仅影响大小写的比较问题, 也影响着索引<ul>
+<li>当某列有同一个词的大小写格式,不能在此列上创建唯一索引,报错中会提示有重复数据.</li>
+<li>索引是B+树,同样需要对字符进行比较,因此在建立唯一索引时由于排序规则对大小写不敏感而导致了错误</li>
+</ul>
+</li>
+</ul>
+<h5 id="2-7-3-CHAR和VARCHAR"><a href="#2-7-3-CHAR和VARCHAR" class="headerlink" title="2.7.3 CHAR和VARCHAR"></a>2.7.3 CHAR和VARCHAR</h5><h6 id="char"><a href="#char" class="headerlink" title="char"></a>char</h6><ul>
+<li>char和varchar是最常使用的两种字符串类型.(N)代表的是字符长度,而非字节长度<ul>
+<li>char(N)用来保存固定长度的字符串, N的范围是0~255</li>
+<li>varchar(N)用来保存变长字符串类型, N的范围是0~65535.</li>
+</ul>
+</li>
+<li><p>char类型的字符串, MySQL数据库会自动对存储列的右边进行填充(Right Padded)操作,知道字符串达到指定的长度N.</p>
+<ul>
+<li>而在读取该列时, MySQL数据库会自动将填充的字符删除</li>
+<li>显式地将sql_mode设置为pad_char_to_full_length,会直接返回填充后的结果</li>
+<li><p>测试例子:</p>
+  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">MariaDB [test]&gt; create table t (a char(10));</span><br><span class="line">Query OK, 0 rows affected (0.013 sec)</span><br><span class="line"></span><br><span class="line">MariaDB [test]&gt; insert into t select 'abc';</span><br><span class="line">Query OK, 1 row affected (0.004 sec)</span><br><span class="line">Records: 1  Duplicates: 0  Warnings: 0</span><br><span class="line"></span><br><span class="line">MariaDB [test]&gt; select a,hex(a),length(a) from t;</span><br><span class="line">+<span class="comment">------+--------+-----------+</span></span><br><span class="line">| a    | hex(a) | length(a) |</span><br><span class="line">+<span class="comment">------+--------+-----------+</span></span><br><span class="line">| abc  | 616263 |         3 |</span><br><span class="line">+<span class="comment">------+--------+-----------+</span></span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">0.001</span> sec)</span><br><span class="line"></span><br><span class="line">MariaDB [<span class="keyword">test</span>]&gt; <span class="keyword">set</span> sql_mode=<span class="string">'pad_char_to_full_length'</span>;</span><br><span class="line">Query OK, 0 rows affected (0.000 sec)</span><br><span class="line"></span><br><span class="line">MariaDB [test]&gt; select a,hex(a),length(a) from t;</span><br><span class="line">+<span class="comment">------------+----------------------+-----------+</span></span><br><span class="line">| a          | hex(a)               | length(a) |</span><br><span class="line">+<span class="comment">------------+----------------------+-----------+</span></span><br><span class="line">| abc        | 61626320202020202020 |        10 |</span><br><span class="line">+<span class="comment">------------+----------------------+-----------+</span></span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">0.001</span> sec)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>第一次查询时,通过select语句取出数据时会将a列右侧填充的空字符移除,从而得到’abc’</li>
+<li>第二次查询时,因为修改了sql_mode,这时得到的结果是’abc       ‘,abc右边有7个填充字符0x20</li>
+<li>注意:length函数返回的是字节长度,而不是字符长度</li>
+</ul>
+</li>
+<li><p>补充一个额外测试, 插入一个中文字符的例子:</p>
+  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">MariaDB [test]&gt; insert into t select '中';</span><br><span class="line">Query OK, 1 row affected (0.004 sec)</span><br><span class="line">Records: 1  Duplicates: 0  Warnings: 0</span><br><span class="line"></span><br><span class="line">MariaDB [test]&gt; set sql_mode='';</span><br><span class="line">Query OK, 0 rows affected (0.000 sec)</span><br><span class="line"></span><br><span class="line">MariaDB [test]&gt; select a,hex(a),length(a) from t;</span><br><span class="line">+<span class="comment">------+--------+-----------+</span></span><br><span class="line">| a    | hex(a) | length(a) |</span><br><span class="line">+<span class="comment">------+--------+-----------+</span></span><br><span class="line">| abc  | 616263 |         3 |</span><br><span class="line">| 中   | E4B8AD |         3 |</span><br><span class="line">+<span class="comment">------+--------+-----------+</span></span><br><span class="line">2 rows in <span class="keyword">set</span> (<span class="number">0.001</span> sec)</span><br><span class="line"></span><br><span class="line">MariaDB [<span class="keyword">test</span>]&gt; <span class="keyword">set</span> sql_mode=<span class="string">'pad_char_to_full_length'</span>;</span><br><span class="line">Query OK, 0 rows affected (0.000 sec)</span><br><span class="line"></span><br><span class="line">MariaDB [test]&gt; select a,hex(a),length(a) from t;</span><br><span class="line">+<span class="comment">--------------+--------------------------+-----------+</span></span><br><span class="line">| a            | hex(a)                   | length(a) |</span><br><span class="line">+<span class="comment">--------------+--------------------------+-----------+</span></span><br><span class="line">| abc          | 61626320202020202020     |        10 |</span><br><span class="line">| 中           | E4B8AD202020202020202020 |        12 |</span><br><span class="line">+<span class="comment">--------------+--------------------------+-----------+</span></span><br><span class="line">2 rows in <span class="keyword">set</span> (<span class="number">0.001</span> sec)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>char(N)中的N表示的是字符长度,而非字节长度. ‘中’需要补足10个字符,后面填充了九个0x20</li>
+<li>length函数返回的是字节长度,而非字符长度. ‘中’加上9个0x20字符,一共12字节</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>对于多字节字符集,char(N)长度的列最多可占用的字节数为该字符集单子符最大占用字节数*N.</li>
+<li><p>char_length和length函数</p>
+  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">MariaDB [test]&gt; set names utf8mb4;</span><br><span class="line">Query OK, 0 rows affected (0.000 sec)</span><br><span class="line"></span><br><span class="line">MariaDB [test]&gt; select @a:='MySQL技术内幕';</span><br><span class="line">+<span class="comment">-------------------------+</span></span><br><span class="line">| @a:='MySQL技术内幕'     |</span><br><span class="line">+<span class="comment">-------------------------+</span></span><br><span class="line">| MySQL技术内幕           |</span><br><span class="line">+<span class="comment">-------------------------+</span></span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">0.000</span> sec)</span><br><span class="line"></span><br><span class="line">MariaDB [<span class="keyword">test</span>]&gt; <span class="keyword">select</span> @a,<span class="keyword">hex</span>(@a),<span class="keyword">length</span>(@a),<span class="keyword">char_length</span>(@a);</span><br><span class="line">+<span class="comment">-------------------+------------------------------------+------------+-----------------+</span></span><br><span class="line">| @a                | hex(@a)                            | length(@a) | char_length(@a) |</span><br><span class="line">+<span class="comment">-------------------+------------------------------------+------------+-----------------+</span></span><br><span class="line">| MySQL技术内幕     | 4D7953514CE68A80E69CAFE58685E5B995 |         17 |               9 |</span><br><span class="line">+<span class="comment">-------------------+------------------------------------+------------+-----------------+</span></span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">0.000</span> sec)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>char_length和length返回的是不同的,一个是字符数, 一个是字节数<h6 id="varchaar"><a href="#varchaar" class="headerlink" title="varchaar"></a>varchaar</h6></li>
+</ul>
+</li>
+<li>varchar类型存储变长字段的字符类型,存储时需要要前缀长度列表加上实际存储的字符,该字符占用1~2字节.<ul>
+<li>当存储的字符串长度小于255字节时,其需要一字节的空间.</li>
+<li>当大于255字节时,需要2字节的空间</li>
+<li>所以对于单字节的latinl来说,char(10)和varchar(10)最大占用的存储空间是不同的:char(10)占用10字节,varchar(10)占用11字节</li>
+</ul>
+</li>
+<li>注意: 对于有些多字节的字符集类型,其char和varchar在存储方法上是一致的,同样需要为长度列表加上字符串的值. MySQL技术内幕:InnoDB存储引擎</li>
+<li>虽然char和varchar的存储方式不太相同,但是对于两个字符串的比较,都只比较其值,忽略char值存在的又填充,即使sql_mode设置为pad_char_full_length也一样  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">MariaDB [test]&gt; create table t(a char(10), b varchar(10));</span><br><span class="line">Query OK, 0 rows affected (0.013 sec)</span><br><span class="line"></span><br><span class="line">MariaDB [test]&gt; insert into t select 'a', 'a';</span><br><span class="line">Query OK, 1 row affected (0.004 sec)</span><br><span class="line">Records: 1  Duplicates: 0  Warnings: 0</span><br><span class="line"></span><br><span class="line">MariaDB [test]&gt; select a=b from t;</span><br><span class="line">+<span class="comment">------+</span></span><br><span class="line">| a=b  |</span><br><span class="line">+<span class="comment">------+</span></span><br><span class="line">|    1 |</span><br><span class="line">+<span class="comment">------+</span></span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">0.001</span> sec)</span><br><span class="line"></span><br><span class="line">MariaDB [<span class="keyword">test</span>]&gt; <span class="keyword">set</span> sql_mode=<span class="string">'pad_char_to_full_length'</span>;</span><br><span class="line">Query OK, 0 rows affected (0.000 sec)</span><br><span class="line"></span><br><span class="line">MariaDB [test]&gt; select a=b from t;</span><br><span class="line">+<span class="comment">------+</span></span><br><span class="line">| a=b  |</span><br><span class="line">+<span class="comment">------+</span></span><br><span class="line">|    1 |</span><br><span class="line">+<span class="comment">------+</span></span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">0.001</span> sec)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h5 id="2-7-4-BINARY和VARBINARY"><a href="#2-7-4-BINARY和VARBINARY" class="headerlink" title="2.7.4 BINARY和VARBINARY"></a>2.7.4 BINARY和VARBINARY</h5><ul>
+<li>binary和varbinary和前面的char,varchar有点类似,不同的是binary和varbinary存储的是二进制的字符串</li>
+<li>binary和varbinary没有字符集的概念, 对其排序和比较都是按照二进制值进行对比</li>
+<li><p>binary和varbinary对于char和varchar</p>
+<ul>
+<li>binary(N)和varbinary(N)中的N指的是字节长度,而非字符长度</li>
+<li><p>char和varchar在进行字符比较时,比较的只是字符本身存储的字符,忽略字符后的填充字符.而对于binary和varbinary来说,由于按照二进制进行比较的,因此结果会非常不同</p>
+  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">MariaDB [test]&gt; select hex('a'), hex('a   '), 'a'='a   ';</span><br><span class="line">+<span class="comment">----------+-------------+------------+</span></span><br><span class="line">| hex('a') | hex('a   ') | 'a'='a   ' |</span><br><span class="line">+<span class="comment">----------+-------------+------------+</span></span><br><span class="line">| 61       | 61202020    |          1 |</span><br><span class="line">+<span class="comment">----------+-------------+------------+</span></span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">0.000</span> sec)</span><br><span class="line"></span><br><span class="line">MariaDB [<span class="keyword">test</span>]&gt; <span class="keyword">select</span> <span class="keyword">hex</span>(<span class="built_in">binary</span>(<span class="string">'a'</span>)), <span class="keyword">hex</span>(<span class="built_in">binary</span>(<span class="string">'a   '</span>)), <span class="built_in">binary</span>(<span class="string">'a'</span>)=<span class="built_in">binary</span>(<span class="string">'a   '</span>);</span><br><span class="line">+<span class="comment">------------------+---------------------+----------------------------+</span></span><br><span class="line">| hex(binary('a')) | hex(binary('a   ')) | binary('a')=binary('a   ') |</span><br><span class="line">+<span class="comment">------------------+---------------------+----------------------------+</span></span><br><span class="line">| 61               | 61202020            |                          0 |</span><br><span class="line">+<span class="comment">------------------+---------------------+----------------------------+</span></span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">0.000</span> sec)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>对于binary字符串,其填充字符是0x00, 而char填充的字符是0x20</p>
+</li>
+</ul>
+</li>
+</ul>
+<h5 id="2-7-5-BLOB和TEXT"><a href="#2-7-5-BLOB和TEXT" class="headerlink" title="2.7.5 BLOB和TEXT"></a>2.7.5 BLOB和TEXT</h5><ul>
+<li>blob(Binary Large Object)是用来存储二进制大数据类型的.根据存储长度的不同blob可细分为一下4种类型,括号中的数字代表存储的字节数.<ul>
+<li>tinyblob(2^8)</li>
+<li>blob(2^16)</li>
+<li>mediumblob(2^24)</li>
+<li>longblob(2^32)</li>
+</ul>
+</li>
+<li>text类型同blob一样,细分为一下4种类型<ul>
+<li>tinytext(2^8)</li>
+<li>text(2^16)</li>
+<li>mediumtext(2^24)</li>
+<li>longtext(2^32)</li>
+</ul>
+</li>
+<li>在大多数情况下,可以将blob类型的列视为足够大的varbinary类型的列,将text类型的列视为足够大的varchar类型的列.</li>
+<li>但是blob和text在以下几个方面又不同于varbinary和varchar<ul>
+<li>在blob和text类型的列上创建索引时,必须指定索引前缀的长度.而varbinary和varchar的前缀长度是可选的</li>
+<li>blob和text类型的列不能有默认值</li>
+<li>在排序时只使用列的前max_sort_length个字节</li>
+</ul>
+</li>
+<li>max_sort_length默认值是1024, 该参数是动态参数,任何客户端都可以在MySQL数据库运行时更改该参数的值.<ul>
+<li>set global max_sort_length=2048;</li>
+<li>select @@global.max_sort_length;</li>
+</ul>
+</li>
+<li>在数据库中,最小的存储单元是页(也可以称为块).为了有效存储列类型为blob或text的大数据类型,一般将列的值存放在行溢出页,而数据页存储的行数据只包含blob或text类型数据的前一部分数据</li>
+<li>对于列类型为blob的数据,InnoDB存储引擎只存储前20字节,而该列的完整火速句则存放在blob的行溢出页中<ul>
+<li>在这种方式下,数据页中能存放大量的行数据,从而提高了数据的查询效率</li>
+</ul>
+</li>
+<li>有些存储引擎内部,比如InnoDB,会将大varchar类型的字符串(如varchar(65530))自动转化为text或blob类型</li>
+</ul>
+<h5 id="2-7-6-ENUM和SET类型"><a href="#2-7-6-ENUM和SET类型" class="headerlink" title="2.7.6 ENUM和SET类型"></a>2.7.6 ENUM和SET类型</h5><ul>
+<li>enum和set类型都是集合类型, 不同的是enum类型最多可枚举65536个元素,而set类型最多枚举64个元素</li>
+<li>由于MySQL不支持传统的check约束,因此通过enum和set类型并结合sql_mode可以解决一部分问题.<ul>
+<li>例如,表中有一个”性别”列,规定的域的范围只能是male和female,在这种情况下可以通过enum类型结合严格的sql_mode模式约束.  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">Database changed</span><br><span class="line">MariaDB [test]&gt; drop table t;</span><br><span class="line">Query OK, 0 rows affected (0.007 sec)</span><br><span class="line"></span><br><span class="line">MariaDB [test]&gt; create table t(</span><br><span class="line">    -&gt; user varchar(30),</span><br><span class="line">    -&gt; sex enum('male', 'female')</span><br><span class="line">    -&gt; )engine=innodb;</span><br><span class="line">Query OK, 0 rows affected (0.015 sec)</span><br><span class="line"></span><br><span class="line">MariaDB [(none)]&gt; select @@global.sql_mode;</span><br><span class="line">+<span class="comment">-------------------------------------------------------------------------------------------+</span></span><br><span class="line">| @@global.sql_mode                                                                         |</span><br><span class="line">+<span class="comment">-------------------------------------------------------------------------------------------+</span></span><br><span class="line">| STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION |</span><br><span class="line">+<span class="comment">-------------------------------------------------------------------------------------------+</span></span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">0.000</span> sec)</span><br><span class="line"></span><br><span class="line">MariaDB [<span class="keyword">test</span>]&gt; <span class="keyword">insert</span> <span class="keyword">into</span> t <span class="keyword">select</span> <span class="string">'David'</span>,<span class="string">'male'</span>;</span><br><span class="line">Query OK, 1 row affected (0.005 sec)</span><br><span class="line">Records: 1  Duplicates: 0  Warnings: 0</span><br><span class="line"></span><br><span class="line">MariaDB [test]&gt; insert into t select 'Mariah','female';</span><br><span class="line">Query OK, 1 row affected (0.004 sec)</span><br><span class="line">Records: 1  Duplicates: 0  Warnings: 0</span><br><span class="line"></span><br><span class="line">MariaDB [test]&gt; insert into t select 'John','bimale';</span><br><span class="line">ERROR 1265 (01000): Data truncated for column 'sex' at row 1</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-8-小结"><a href="#2-8-小结" class="headerlink" title="2.8 小结"></a>2.8 小结</h4><ul>
+<li>不能轻视数据类型的钻则,这是构建关系数据库的基础并且将影响到之后的所有数据库的应用.</li>
+<li>日期和时间类型比较复杂</li>
+<li>使用字符类型时需要特别考虑字符集及排序规则的选择</li>
+<li>建立将数据库的默认字符集设置为utf8</li>
+</ul>
+<h4 id="注意一点"><a href="#注意一点" class="headerlink" title="注意一点"></a>注意一点</h4><ul>
+<li>MySQL中的utf8并不是真正的utf8, 通过show charset可以看到,MySQL的utf8单字符最大3字节,但是完整的utf8是最多4字节.</li>
+<li>utf8mb4是完整的utf8, 如果存储的内容需要保存一些特殊字符, 需要将字符集改为utf8mb4以获取完整的utf8支持.</li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/MySQL/" rel="tag"># MySQL</a>
+          
+            <a href="/tags/MySQL技术内幕/" rel="tag"># MySQL技术内幕</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/02/28/MySQL技术内幕:SQL编程/第二章数据类型4/" rel="next" title="第二章数据类型4">
+                <i class="fa fa-chevron-left"></i> 第二章数据类型4
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">jinglingting</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">2</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">3</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-5-数字类型"><span class="nav-text">2.5 数字类型</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#2-5-1-整型"><span class="nav-text">2.5.1 整型</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-5-2-浮点型-非精确型"><span class="nav-text">2.5.2 浮点型(非精确型)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-5-3-高精度类型"><span class="nav-text">2.5.3 高精度类型</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-5-4-位类型"><span class="nav-text">2.5.4 位类型</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-6-关于数字的经典SQL编程问题"><span class="nav-text">2.6 关于数字的经典SQL编程问题</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#2-6-1-数字辅助表"><span class="nav-text">2.6.1 数字辅助表</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-6-2-连续范围问题"><span class="nav-text">2.6.2 连续范围问题</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-7-字符类型"><span class="nav-text">2.7 字符类型</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#2-7-1-字符集"><span class="nav-text">2.7.1 字符集</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-7-2-排序规则"><span class="nav-text">2.7.2 排序规则</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-7-3-CHAR和VARCHAR"><span class="nav-text">2.7.3 CHAR和VARCHAR</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#char"><span class="nav-text">char</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#varchaar"><span class="nav-text">varchaar</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-7-4-BINARY和VARBINARY"><span class="nav-text">2.7.4 BINARY和VARBINARY</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-7-5-BLOB和TEXT"><span class="nav-text">2.7.5 BLOB和TEXT</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-7-6-ENUM和SET类型"><span class="nav-text">2.7.6 ENUM和SET类型</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-8-小结"><span class="nav-text">2.8 小结</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#注意一点"><span class="nav-text">注意一点</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">jinglingting</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.0.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+  
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

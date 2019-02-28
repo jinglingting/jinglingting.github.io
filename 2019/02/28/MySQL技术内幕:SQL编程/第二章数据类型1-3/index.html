@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.0.0',
+    sidebar: {"position":"right","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false,"dimmer":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="2.0 本章主要介绍了一些与数据库类型相关的SQL编程问题, 主要关注日期类型, 数字类型及字符类型">
+<meta name="keywords" content="MySQL,MySQL技术内幕">
+<meta property="og:type" content="article">
+<meta property="og:title" content="第二章数据类型1-3">
+<meta property="og:url" content="http://yoursite.com/2019/02/28/MySQL技术内幕:SQL编程/第二章数据类型1-3/index.html">
+<meta property="og:site_name" content="Jing">
+<meta property="og:description" content="2.0 本章主要介绍了一些与数据库类型相关的SQL编程问题, 主要关注日期类型, 数字类型及字符类型">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-02-28T10:20:47.013Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="第二章数据类型1-3">
+<meta name="twitter:description" content="2.0 本章主要介绍了一些与数据库类型相关的SQL编程问题, 主要关注日期类型, 数字类型及字符类型">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/02/28/MySQL技术内幕:SQL编程/第二章数据类型1-3/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>第二章数据类型1-3 | Jing</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jing</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">生命不息,折腾不止.</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>Categories</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/28/MySQL技术内幕:SQL编程/第二章数据类型1-3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="jinglingting">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jing">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">第二章数据类型1-3
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2019-02-28 17:41:20 / Modified: 19:20:47" itemprop="dateCreated datePublished" datetime="2019-02-28T17:41:20+09:00">2019-02-28</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/category/MySQL技术内幕-SQL编程-读书笔记/" itemprop="url" rel="index"><span itemprop="name">MySQL技术内幕:SQL编程-读书笔记</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h4 id="2-0"><a href="#2-0" class="headerlink" title="2.0"></a>2.0</h4><ul>
+<li>本章主要介绍了一些与数据库类型相关的SQL编程问题, 主要关注日期类型, 数字类型及字符类型<a id="more"></a>
+</li>
+</ul>
+<h4 id="2-1-类型属性"><a href="#2-1-类型属性" class="headerlink" title="2.1 类型属性"></a>2.1 类型属性</h4><h5 id="2-1-1-UNSIGNED"><a href="#2-1-1-UNSIGNED" class="headerlink" title="2.1.1 UNSIGNED"></a>2.1.1 UNSIGNED</h5><ul>
+<li>unsigned属性就是将数字类型嗯无符号化.</li>
+<li>无符号对于主键是自增长类型是个不错的选择, 因为一般来说, 用户都希望主键是非负数</li>
+<li>在实际使用中, 可能会带来一些负面影响</li>
+<li>在MySQL数据库中,对于unsigned数的操作,其返回值都是unsigned的. 当相减小于0时,结果会超出预期<ul>
+<li>例如 0 - 1 = 0xffffffff, 用无符号表示是很大的值</li>
+</ul>
+</li>
+<li>尽量不要使用unsigned, 因为可能会带来一些意想不到的效果.</li>
+<li>对于int类型可能存放不了的数据, int unsigned同样可能存放不了, 与其如此, 还不如在数据库设计阶段将int类型提升为bigint类型</li>
+</ul>
+<h5 id="2-1-2-ZEROFILL"><a href="#2-1-2-ZEROFILL" class="headerlink" title="2.1.2 ZEROFILL"></a>2.1.2 ZEROFILL</h5><ul>
+<li>zerofill属性像是一个显示的属性</li>
+<li>在创建表时,字段设置类型为int, 完成后也会默认为int(10)</li>
+<li>如果没有zerofill这个属性, 括号内的数字没有意义</li>
+<li>但是如果修改字段属性添加了zerofill属性, 在查询的的时候如果宽度小于设定的宽度, 则自动填充0<ul>
+<li>注意: 这只是最后显示的结果, 在MySQL中实际存储的还是正常的数值</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-2-SQL-MODE设置"><a href="#2-2-SQL-MODE设置" class="headerlink" title="2.2 SQL_MODE设置"></a>2.2 SQL_MODE设置</h4><ul>
+<li>对于SQL_MODE的设置, 可以在MySQL的配置文件如my.cnf和my.ini中进行,也可以在客户端工具中进行, 并且可以分别进行全局的设置和当前会话的设置</li>
+<li>查看当前SQL_MODE的设置情况<ul>
+<li>select @@global.sql_mode\G; 全局的</li>
+<li>select @@session.sql_mode\G; 当前会话的</li>
+</ul>
+</li>
+<li>设置sql_mode值:<ul>
+<li>SET GLOBAL sql_mode = ‘modes’;</li>
+<li>SET SESSION sql_mode = ‘modes’;</li>
+</ul>
+</li>
+<li><p>设置sql_mode: set global sql_mode=”xxx”;</p>
+<ul>
+<li>严格模式是指将SQL_MODE变量设置为strict_trans_tables或strict_all_tables中的至少一种</li>
+<li>strict_trans_tables: <ul>
+<li>在该模式下, 如果一个值不能插入到一个事务表中(例如表的存储引擎为InnoDB)中,则中断当前操作</li>
+<li>不影响非事务表(例如表的存储引擎为MyISAM)</li>
+</ul>
+</li>
+<li>allow_invalid_dates: 该选项并不完全对日期的合法性进行检查,只检查月份是否在1~12之间,日期是否在1~31之间.<ul>
+<li>该模式仅对date和datetime类型有效</li>
+<li>对timestamp无效,因为timestamp总是要求一个合法的输入</li>
+</ul>
+</li>
+<li>ansi_quotes: 启用ansi_quotes后,不能用双引号来引用字符串,因为它将被解释为识别符.<ul>
+<li>例如当某个字段是varchar类型, 然后set sql_mode=’ANSI_QUOTES’;继续使用双引号来插入该字段值会报错</li>
+<li>报错信息: ERROR 1054 (42S22): Unknown column ‘xxx’ in ‘field list’</li>
+</ul>
+</li>
+<li>error_for_division_by_zero: 在insert或update过程中,如果数据被零除(或mod(x,0)), 则产生错误(否则为警告).<ul>
+<li>如果未给出该模式, 那么数据被零除时,MySQL返回NULL.</li>
+<li>如果用到insert ignore或update ignore中, MySQL生成被零除警告,但操作结果为NULL;</li>
+</ul>
+</li>
+<li><p>high_not_precedence: not操作符的优先顺序是表达式.</p>
+<ul>
+<li>例如: not a between b and c 被解释为not (a between b and c);</li>
+<li>在一些旧版本中被解释为(not a) between b and c;</li>
+<li>启动high_not_precedence模式, 可以获得以前旧版本的更高优先级的结果</li>
+<li>例子  <figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SET sql_mode = '';</span><br><span class="line">mysql&gt; SELECT NOT 1 BETWEEN -5 AND 5;</span><br><span class="line">        -&gt; 0</span><br><span class="line">mysql&gt; SET sql_mode = 'HIGH_NOT_PRECEDENCE';</span><br><span class="line">mysql&gt; SELECT NOT 1 BETWEEN -5 AND 5;</span><br><span class="line">        -&gt; 1</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>ignore_space: 函数名和括号”(“之间有空格.</p>
+<ul>
+<li>要访问保存为关键字的数据库,表或者列名, 用户必须引用该选项</li>
+<li>例如:  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; CREATE TABLE count (i INT);</span><br><span class="line">ERROR 1064 (42000): You have an error in your SQL syntax</span><br><span class="line">mysql&gt; CREATE TABLE `count` (i INT);</span><br><span class="line">Query OK, 0 rows affected (0.00 sec)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>no_auto_create_user: 禁止grant创建密码为空的用户</p>
+</li>
+<li>no_auto_value_on_zero: 该选项影响列为自增长的插入<ul>
+<li>在默认设置下, 插入0或者NULL代表生成下一个自增长的值.</li>
+<li>如果用户希望插入的值为0, 而该列又是自增长的, 那个这个选项就有用了</li>
+</ul>
+</li>
+<li>no_backslash_escapes: 反斜杠”\”作为普通字符而非转义字符</li>
+<li>no_dir_in_create: 在创建表时忽略所有index directory和data directory的选项</li>
+<li>no_engine_substitution: 如果需要的存储引擎被禁用或未编译, 那么跑出错误.<ul>
+<li>默认用默认的存储引擎替代, 并抛出一个异常</li>
+</ul>
+</li>
+<li>no_unsigned_subtraction: 启用这个选项后两个unsigned类型相减返回signed类型</li>
+<li>no_zero_date: <ul>
+<li>在非严格模式下,可以插入形如”0000-00-00 00:00:00”的非法日期,mysql数据库仅抛出一个警告.</li>
+<li>启用该选项后, mysql数据库不允许插入零日期, 插入零日期会抛出错误而非警告</li>
+</ul>
+</li>
+<li>only_full_group_by: 对于group by聚合操作, 如果在select中的列没有在group by中出现, 那么这句sql是不合法的</li>
+<li>pad_char_to_full_length: 对于char类型字段,不要阶段空洞数据.空洞数据就是自动填充值为0x20的数据.<ul>
+<li>默认情况下, mysql数据库已经对查询结果中的char进行了截断</li>
+<li>启用选项后, 则反映的是实际存储的内容</li>
+</ul>
+</li>
+<li>pipes_as_concat: 将”||”视为字符串的连接操作符而非或运算符<ul>
+<li>这和Oracle数据库是一样的,野鹤字符串的拼接函数Concat相类似</li>
+</ul>
+</li>
+<li>real_as_float: 将real视为float的同义词,而不是double的同义词</li>
+<li>strict_all_tables: 对所有引擎的表都启用严格模式.<ul>
+<li>strict_trans_tables 只对支持事务的表启用严格模式</li>
+<li>在严格模式下, 一旦任何操作的数据产生问题, 都会终止当前的操作.</li>
+<li>对于启用该选项的非事务引擎来说, 这时数据可能停留在一个未知的状态. 这可能不是所有非事务引擎愿意看到的一种情况.</li>
+<li>因此需要非常小心这个选项可能带来的潜在影响</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-3-日期和时间类型"><a href="#2-3-日期和时间类型" class="headerlink" title="2.3 日期和时间类型"></a>2.3 日期和时间类型</h4><ul>
+<li><p>mysql数据库中有五种与日期和时间有关的数据类型, 如下表:</p>
+<ul>
+<li><p>如下表:</p>
+<p>类型| 所占空间<br>—-| —-<br>datetime| 8字节<br>date | 3字节<br>timestamp | 4字节<br>year | 1字节<br>time | 3字节</p>
+</li>
+</ul>
+</li>
+</ul>
+<h5 id="2-3-1-DATETIME和DATE"><a href="#2-3-1-DATETIME和DATE" class="headerlink" title="2.3.1 DATETIME和DATE"></a>2.3.1 DATETIME和DATE</h5><ul>
+<li>在mysql数据库中, 对日期和时间的输入格式的要求是非常宽松的, 一下的输入都可以视为日期类型<ul>
+<li>2011-01-01 00:01:10</li>
+<li>2011/01/01 00+01+10</li>
+<li>20110101000110</li>
+<li>11/01/01 00@01@10(数据库将11视为离现在最近的一个年份)</li>
+</ul>
+</li>
+<li>如果没有特别的条件和要求, 还是输入时按照标准的”YYYY-MM-DD HH:MM:SS”格式进行.</li>
+<li>从mysql5.6.4开始, mysql增加了对秒的小数部分(fractional second)的支持, 具体语法为: type_name(fsp)<ul>
+<li>type_name的类型可以是time, datetime, timestamp.</li>
+<li>fsp表示支持的秒的小数部分的精度, 最大为6, 表示微秒; 默认为0,表示没有小数部分</li>
+<li>时间函数curtime(), sysdate() utc_timestamp()也增加了对fsp的支持</li>
+</ul>
+</li>
+</ul>
+<h5 id="2-3-2-TIMESTAMP"><a href="#2-3-2-TIMESTAMP" class="headerlink" title="2.3.2 TIMESTAMP"></a>2.3.2 TIMESTAMP</h5><ul>
+<li>timestamp和datetime显示的结果是一样的,都是固定的”YYYY-MM-DD HH:MM:SS”的形式.</li>
+<li>timestamp占用4字节,显示范围是”1970-01-01 00:00:00”UTC到”2038-01-19 03:14:07”UTC. 其实际存储的内容是为”1970-01-01 00:00:00”到当前时间的毫秒数</li>
+<li>timestamp类型和datetime类型除了在显示时间范围上有所不同外, 还有以下不同:<ul>
+<li>在建表时, 列为timestamp的日期类型可以设置一个默认值, 而datetime不行</li>
+<li>在更新表时, 可以设置timestamp类型的列自动更新时间为当前时间</li>
+</ul>
+</li>
+<li><p>timestamp设置默认时间的例子:</p>
+  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">MariaDB [test]&gt; create table stamp( a int, b timestamp default current_timestamp)engine=innodb;</span><br><span class="line">Query OK, 0 rows affected (0.010 sec)</span><br><span class="line"></span><br><span class="line">MariaDB [test]&gt; insert into stamp(a) values(1);</span><br><span class="line">Query OK, 1 row affected (0.004 sec)</span><br><span class="line"></span><br><span class="line">MariaDB [test]&gt; select * from stamp;</span><br><span class="line">+<span class="comment">------+---------------------+</span></span><br><span class="line">| a    | b                   |</span><br><span class="line">+<span class="comment">------+---------------------+</span></span><br><span class="line">|    1 | 2019-02-27 12:59:38 |</span><br><span class="line">+<span class="comment">------+---------------------+</span></span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">0.001</span> sec)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>timestamp自动更新的例子:</p>
+  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 创建表</span></span><br><span class="line">MariaDB [test]&gt; create table stamp2(a int, b timestamp on update current_timestamp);</span><br><span class="line">Query OK, 0 rows affected (0.010 sec)</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 插入数据</span></span><br><span class="line">MariaDB [test]&gt; insert into stamp2 values(1, current_timestamp);</span><br><span class="line">Query OK, 1 row affected (0.005 sec)</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 查询</span></span><br><span class="line">MariaDB [test]&gt; select * from stamp2;</span><br><span class="line">+<span class="comment">------+---------------------+</span></span><br><span class="line">| a    | b                   |</span><br><span class="line">+<span class="comment">------+---------------------+</span></span><br><span class="line">|    1 | 2019-02-27 13:03:23 |</span><br><span class="line">+<span class="comment">------+---------------------+</span></span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">0.001</span> sec)</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 等一段时间后更新</span></span><br><span class="line">MariaDB [<span class="keyword">test</span>]&gt; <span class="keyword">update</span> stamp2 <span class="keyword">set</span> a=<span class="number">2</span>;</span><br><span class="line">Query OK, 1 row affected (0.004 sec)</span><br><span class="line">Rows matched: 1  Changed: 1  Warnings: 0</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 查询</span></span><br><span class="line">MariaDB [test]&gt; select * from stamp2;</span><br><span class="line">+<span class="comment">------+---------------------+</span></span><br><span class="line">| a    | b                   |</span><br><span class="line">+<span class="comment">------+---------------------+</span></span><br><span class="line">|    2 | 2019-02-27 13:03:53 |</span><br><span class="line">+<span class="comment">------+---------------------+</span></span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">0.001</span> sec)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>如果执行了update操作,而实际上行并没有得到更新, 那么是不会更新b列的</li>
+</ul>
+</li>
+</ul>
+<h5 id="2-3-3-YEAR和TIME"><a href="#2-3-3-YEAR和TIME" class="headerlink" title="2.3.3 YEAR和TIME"></a>2.3.3 YEAR和TIME</h5><ul>
+<li>year类型占用1字节, 并且在定义时可以指定显示的宽度为year(4)或year(2)<ul>
+<li>year(4), 显示的年份范围为1901~2155;</li>
+<li>year(2), 显示的年份范围为1970~2070；在year(2)的设置下,00~69代表2000~2069年</li>
+</ul>
+</li>
+<li>time类型占用3字节,显示范围为”-838:59:59” ~ “838:59:59”.<ul>
+<li>time类型不仅可以用来保存一天中的时间,也可以用来保存时间间隔</li>
+</ul>
+</li>
+</ul>
+<h5 id="2-3-4-与日期和时间相关的函数"><a href="#2-3-4-与日期和时间相关的函数" class="headerlink" title="2.3.4 与日期和时间相关的函数"></a>2.3.4 与日期和时间相关的函数</h5><ol>
+<li>now current_timestamp sysdate 都能返回当前的系统时间<ul>
+<li>current_timestamp是now的同义词, 也就是说两者是相同的</li>
+<li>sysdate函数返回的是执行到当前函数时的时间, 而now返回的是执行sql语句时的时间</li>
+</ul>
+</li>
+<li><p>时间加减函数</p>
+<ul>
+<li>now函数可以返回时间, 也可以返回一个数字</li>
+<li><p>date_add(), date_sub()函数, 具体使用方法有date_add(date, interval expr unit)和date_sub(date, interval expr unit)</p>
+<ul>
+<li><p>例子:</p>
+  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">MariaDB [test]&gt; select now() as now,</span><br><span class="line">    -&gt; date_add(now(), interval 1 day) as tomorrow,</span><br><span class="line">    -&gt; date_sub(now(), interval 1 day) as yesterday;</span><br><span class="line">+<span class="comment">---------------------+---------------------+---------------------+</span></span><br><span class="line">| now                 | tomorrow            | yesterday           |</span><br><span class="line">+<span class="comment">---------------------+---------------------+---------------------+</span></span><br><span class="line">| 2019-02-27 14:10:11 | 2019-02-28 14:10:11 | 2019-02-26 14:10:11 |</span><br><span class="line">+<span class="comment">---------------------+---------------------+---------------------+</span></span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">0.000</span> sec)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>其中expr值可以是正值, 也可以是负值.</p>
+</li>
+</ul>
+</li>
+<li>date_add()是怎么处理闰月的?<ul>
+<li>如果目标年份是闰月, 那么返回的日期是2月29日</li>
+<li>如果不是闰月, 那么返回2月28日</li>
+</ul>
+</li>
+<li>有year, month, day, hour, minute, second, microsecond数据类型</li>
+</ul>
+</li>
+<li><p>date_format函数</p>
+<ul>
+<li>按照用户需求格式打印出日期</li>
+<li><p>例子:</p>
+  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">MariaDB [test]&gt; select date_format(now(), "%Y%m%d") as datetime;</span><br><span class="line">+<span class="comment">----------+</span></span><br><span class="line">| datetime |</span><br><span class="line">+<span class="comment">----------+</span></span><br><span class="line">| 20190227 |</span><br><span class="line">+<span class="comment">----------+</span></span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">0.000</span> sec)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>错误使用这个函数的例子:select * from table where data_format(date, ‘%Y%m%d’)=”xxxx-xx-xx”;</p>
+<ul>
+<li>一般来说表中都会有一个对日期类型的索引, 如果使用上述语句, 优化器绝对不会使用索引, 也不可能通过索引来查询数据</li>
+<li>因此上述查询的执行效率可能非常低</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/MySQL/" rel="tag"># MySQL</a>
+          
+            <a href="/tags/MySQL技术内幕/" rel="tag"># MySQL技术内幕</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/02/26/MySQL技术内幕:SQL编程/第一章SQL编程/" rel="next" title="第一章SQL编程">
+                <i class="fa fa-chevron-left"></i> 第一章SQL编程
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/02/28/MySQL技术内幕:SQL编程/第二章数据类型4/" rel="prev" title="第二章数据类型4">
+                第二章数据类型4 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">jinglingting</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">2</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">3</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-0"><span class="nav-text">2.0</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-类型属性"><span class="nav-text">2.1 类型属性</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#2-1-1-UNSIGNED"><span class="nav-text">2.1.1 UNSIGNED</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-1-2-ZEROFILL"><span class="nav-text">2.1.2 ZEROFILL</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-SQL-MODE设置"><span class="nav-text">2.2 SQL_MODE设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-日期和时间类型"><span class="nav-text">2.3 日期和时间类型</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#2-3-1-DATETIME和DATE"><span class="nav-text">2.3.1 DATETIME和DATE</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-3-2-TIMESTAMP"><span class="nav-text">2.3.2 TIMESTAMP</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-3-3-YEAR和TIME"><span class="nav-text">2.3.3 YEAR和TIME</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-3-4-与日期和时间相关的函数"><span class="nav-text">2.3.4 与日期和时间相关的函数</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">jinglingting</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.0.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+  
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

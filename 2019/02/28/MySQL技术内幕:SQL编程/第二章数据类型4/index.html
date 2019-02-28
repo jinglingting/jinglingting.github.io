@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.0.0',
+    sidebar: {"position":"right","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false,"dimmer":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="2.4 关于日期的经典SQL编程问题">
+<meta name="keywords" content="MySQL,MySQL技术内幕">
+<meta property="og:type" content="article">
+<meta property="og:title" content="第二章数据类型4">
+<meta property="og:url" content="http://yoursite.com/2019/02/28/MySQL技术内幕:SQL编程/第二章数据类型4/index.html">
+<meta property="og:site_name" content="Jing">
+<meta property="og:description" content="2.4 关于日期的经典SQL编程问题">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-02-28T10:21:00.003Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="第二章数据类型4">
+<meta name="twitter:description" content="2.4 关于日期的经典SQL编程问题">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/02/28/MySQL技术内幕:SQL编程/第二章数据类型4/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>第二章数据类型4 | Jing</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jing</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">生命不息,折腾不止.</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>Categories</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/28/MySQL技术内幕:SQL编程/第二章数据类型4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="jinglingting">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jing">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">第二章数据类型4
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2019-02-28 17:45:20 / Modified: 19:21:00" itemprop="dateCreated datePublished" datetime="2019-02-28T17:45:20+09:00">2019-02-28</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/category/MySQL技术内幕-SQL编程-读书笔记/" itemprop="url" rel="index"><span itemprop="name">MySQL技术内幕:SQL编程-读书笔记</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h4 id="2-4-关于日期的经典SQL编程问题"><a href="#2-4-关于日期的经典SQL编程问题" class="headerlink" title="2.4 关于日期的经典SQL编程问题"></a>2.4 关于日期的经典SQL编程问题</h4><a id="more"></a>
+<h5 id="2-4-1-生日问题"><a href="#2-4-1-生日问题" class="headerlink" title="2.4.1 生日问题"></a>2.4.1 生日问题</h5><ul>
+<li>在生日问题中, 一般对于闰月的处理如下:<ul>
+<li>如果是闰月, 那么返回2月29日</li>
+<li>如果不是闰月, 那么返回3月1日</li>
+</ul>
+</li>
+<li><p>根据某个用户的出生日期和当前日期, 计算他最近的生日示例: (需要安装mysql官方的示例数据库employees)</p>
+  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">MariaDB [test]&gt; create table employees like employees.employees;</span><br><span class="line">Query OK, 0 rows affected (0.013 sec)</span><br><span class="line"></span><br><span class="line">MariaDB [test]&gt; insert into employees select * from employees.employees limit 10;</span><br><span class="line">Query OK, 10 rows affected (0.004 sec)</span><br><span class="line">Records: 10  Duplicates: 0  Warnings: 0</span><br><span class="line"></span><br><span class="line">MariaDB [test]&gt; insert into employees values(10011, '1972-02-29', "Jiang", "David", "M", '1990-02-20');</span><br><span class="line">Query OK, 1 row affected (0.003 sec)</span><br><span class="line"></span><br><span class="line">MariaDB [test]&gt; select concat(first_name, ' ', last_name) as Name, birth_date as Birthday from employees;</span><br><span class="line">+<span class="comment">--------------------+------------+</span></span><br><span class="line">| Name               | Birthday   |</span><br><span class="line">+<span class="comment">--------------------+------------+</span></span><br><span class="line">| Georgi Facello     | 1953-09-02 |</span><br><span class="line">| Bezalel Simmel     | 1964-06-02 |</span><br><span class="line">| Parto Bamford      | 1959-12-03 |</span><br><span class="line">| Chirstian Koblick  | 1954-05-01 |</span><br><span class="line">| Kyoichi Maliniak   | 1955-01-21 |</span><br><span class="line">| Anneke Preusig     | 1953-04-20 |</span><br><span class="line">| Tzvetan Zielinski  | 1957-05-23 |</span><br><span class="line">| Saniya Kalloufi    | 1958-02-19 |</span><br><span class="line">| Sumant Peac        | 1952-04-19 |</span><br><span class="line">| Duangkaew Piveteau | 1963-06-01 |</span><br><span class="line">| Jiang David        | 1972-02-29 |</span><br><span class="line">+<span class="comment">--------------------+------------+</span></span><br><span class="line">11 rows in <span class="keyword">set</span> (<span class="number">0.001</span> sec)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>解决方案:</p>
+  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">name</span>, birthday,</span><br><span class="line">    <span class="keyword">if</span>(cur&gt;today, cur, <span class="keyword">next</span>) <span class="keyword">as</span> birth_day</span><br><span class="line"><span class="keyword">from</span> (</span><br><span class="line">    <span class="keyword">select</span> <span class="keyword">name</span>, birthday, today,</span><br><span class="line">        <span class="keyword">date_add</span>(cur, <span class="built_in">interval</span> <span class="keyword">if</span> (<span class="keyword">day</span>(birthday)=<span class="number">29</span>&amp;&amp;</span><br><span class="line">            <span class="keyword">day</span>(cur)=<span class="number">28</span>, <span class="number">1</span>, <span class="number">0</span>) <span class="keyword">day</span>) <span class="keyword">as</span> cur,</span><br><span class="line">        <span class="keyword">date_add</span>(<span class="keyword">next</span>, <span class="built_in">interval</span> <span class="keyword">if</span> (<span class="keyword">day</span>(birthday)=<span class="number">29</span>&amp;&amp;</span><br><span class="line">            <span class="keyword">day</span>(<span class="keyword">next</span>)=<span class="number">28</span>, <span class="number">1</span>, <span class="number">0</span>) <span class="keyword">day</span>) <span class="keyword">as</span> <span class="keyword">next</span></span><br><span class="line">    <span class="keyword">from</span>(</span><br><span class="line">        <span class="keyword">select</span> <span class="keyword">name</span>, birthday, today,<span class="keyword">date_add</span>(birthday, <span class="built_in">interval</span> diff <span class="keyword">year</span>) <span class="keyword">as</span> cur,</span><br><span class="line">            <span class="keyword">date_add</span>(birthday, <span class="built_in">interval</span> diff+<span class="number">1</span> <span class="keyword">year</span>) <span class="keyword">as</span> <span class="keyword">next</span></span><br><span class="line">        <span class="keyword">from</span></span><br><span class="line">        (</span><br><span class="line">            <span class="keyword">select</span> <span class="keyword">concat</span>(last_name, <span class="string">" "</span>, first_name) <span class="keyword">as</span> <span class="keyword">name</span>,</span><br><span class="line">                birth_date <span class="keyword">as</span> birthday,</span><br><span class="line">                (<span class="keyword">year</span>(<span class="keyword">now</span>()) - <span class="keyword">year</span>(birth_date)) <span class="keyword">as</span> diff,</span><br><span class="line">                <span class="keyword">now</span>() <span class="keyword">as</span> today</span><br><span class="line">            <span class="keyword">from</span> employees</span><br><span class="line">        ) <span class="keyword">as</span> a</span><br><span class="line">    ) <span class="keyword">as</span> b</span><br><span class="line">) <span class="keyword">as</span> c;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>结果:</p>
+  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line">MariaDB [test]&gt; source 02birthday.sql</span><br><span class="line">+<span class="comment">--------------------+------------+------+---------------------+</span></span><br><span class="line">| name               | birthday   | diff | today               |</span><br><span class="line">+<span class="comment">--------------------+------------+------+---------------------+</span></span><br><span class="line">| Facello Georgi     | 1953-09-02 |   66 | 2019-02-27 15:01:22 |</span><br><span class="line">| Simmel Bezalel     | 1964-06-02 |   55 | 2019-02-27 15:01:22 |</span><br><span class="line">| Bamford Parto      | 1959-12-03 |   60 | 2019-02-27 15:01:22 |</span><br><span class="line">| Koblick Chirstian  | 1954-05-01 |   65 | 2019-02-27 15:01:22 |</span><br><span class="line">| Maliniak Kyoichi   | 1955-01-21 |   64 | 2019-02-27 15:01:22 |</span><br><span class="line">| Preusig Anneke     | 1953-04-20 |   66 | 2019-02-27 15:01:22 |</span><br><span class="line">| Zielinski Tzvetan  | 1957-05-23 |   62 | 2019-02-27 15:01:22 |</span><br><span class="line">| Kalloufi Saniya    | 1958-02-19 |   61 | 2019-02-27 15:01:22 |</span><br><span class="line">| Peac Sumant        | 1952-04-19 |   67 | 2019-02-27 15:01:22 |</span><br><span class="line">| Piveteau Duangkaew | 1963-06-01 |   56 | 2019-02-27 15:01:22 |</span><br><span class="line">| David Jiang        | 1972-02-29 |   47 | 2019-02-27 15:01:22 |</span><br><span class="line">+<span class="comment">--------------------+------------+------+---------------------+</span></span><br><span class="line">11 rows in <span class="keyword">set</span> (<span class="number">0.000</span> sec)</span><br><span class="line"></span><br><span class="line">+<span class="comment">--------------------+------------+---------------------+------------+------------+</span></span><br><span class="line">| <span class="keyword">name</span>               | birthday   | today               | cur        | <span class="keyword">next</span>       |</span><br><span class="line">+<span class="comment">--------------------+------------+---------------------+------------+------------+</span></span><br><span class="line">| Facello Georgi     | <span class="number">1953</span><span class="number">-09</span><span class="number">-02</span> | <span class="number">2019</span><span class="number">-02</span><span class="number">-27</span> <span class="number">15</span>:<span class="number">01</span>:<span class="number">22</span> | <span class="number">2019</span><span class="number">-09</span><span class="number">-02</span> | <span class="number">2020</span><span class="number">-09</span><span class="number">-02</span> |</span><br><span class="line">| Simmel Bezalel     | <span class="number">1964</span><span class="number">-06</span><span class="number">-02</span> | <span class="number">2019</span><span class="number">-02</span><span class="number">-27</span> <span class="number">15</span>:<span class="number">01</span>:<span class="number">22</span> | <span class="number">2019</span><span class="number">-06</span><span class="number">-02</span> | <span class="number">2020</span><span class="number">-06</span><span class="number">-02</span> |</span><br><span class="line">| Bamford Parto      | <span class="number">1959</span><span class="number">-12</span><span class="number">-03</span> | <span class="number">2019</span><span class="number">-02</span><span class="number">-27</span> <span class="number">15</span>:<span class="number">01</span>:<span class="number">22</span> | <span class="number">2019</span><span class="number">-12</span><span class="number">-03</span> | <span class="number">2020</span><span class="number">-12</span><span class="number">-03</span> |</span><br><span class="line">| Koblick Chirstian  | <span class="number">1954</span><span class="number">-05</span><span class="number">-01</span> | <span class="number">2019</span><span class="number">-02</span><span class="number">-27</span> <span class="number">15</span>:<span class="number">01</span>:<span class="number">22</span> | <span class="number">2019</span><span class="number">-05</span><span class="number">-01</span> | <span class="number">2020</span><span class="number">-05</span><span class="number">-01</span> |</span><br><span class="line">| Maliniak Kyoichi   | <span class="number">1955</span><span class="number">-01</span><span class="number">-21</span> | <span class="number">2019</span><span class="number">-02</span><span class="number">-27</span> <span class="number">15</span>:<span class="number">01</span>:<span class="number">22</span> | <span class="number">2019</span><span class="number">-01</span><span class="number">-21</span> | <span class="number">2020</span><span class="number">-01</span><span class="number">-21</span> |</span><br><span class="line">| Preusig Anneke     | <span class="number">1953</span><span class="number">-04</span><span class="number">-20</span> | <span class="number">2019</span><span class="number">-02</span><span class="number">-27</span> <span class="number">15</span>:<span class="number">01</span>:<span class="number">22</span> | <span class="number">2019</span><span class="number">-04</span><span class="number">-20</span> | <span class="number">2020</span><span class="number">-04</span><span class="number">-20</span> |</span><br><span class="line">| Zielinski Tzvetan  | <span class="number">1957</span><span class="number">-05</span><span class="number">-23</span> | <span class="number">2019</span><span class="number">-02</span><span class="number">-27</span> <span class="number">15</span>:<span class="number">01</span>:<span class="number">22</span> | <span class="number">2019</span><span class="number">-05</span><span class="number">-23</span> | <span class="number">2020</span><span class="number">-05</span><span class="number">-23</span> |</span><br><span class="line">| Kalloufi Saniya    | <span class="number">1958</span><span class="number">-02</span><span class="number">-19</span> | <span class="number">2019</span><span class="number">-02</span><span class="number">-27</span> <span class="number">15</span>:<span class="number">01</span>:<span class="number">22</span> | <span class="number">2019</span><span class="number">-02</span><span class="number">-19</span> | <span class="number">2020</span><span class="number">-02</span><span class="number">-19</span> |</span><br><span class="line">| Peac Sumant        | <span class="number">1952</span><span class="number">-04</span><span class="number">-19</span> | <span class="number">2019</span><span class="number">-02</span><span class="number">-27</span> <span class="number">15</span>:<span class="number">01</span>:<span class="number">22</span> | <span class="number">2019</span><span class="number">-04</span><span class="number">-19</span> | <span class="number">2020</span><span class="number">-04</span><span class="number">-19</span> |</span><br><span class="line">| Piveteau Duangkaew | <span class="number">1963</span><span class="number">-06</span><span class="number">-01</span> | <span class="number">2019</span><span class="number">-02</span><span class="number">-27</span> <span class="number">15</span>:<span class="number">01</span>:<span class="number">22</span> | <span class="number">2019</span><span class="number">-06</span><span class="number">-01</span> | <span class="number">2020</span><span class="number">-06</span><span class="number">-01</span> |</span><br><span class="line">| David Jiang        | <span class="number">1972</span><span class="number">-02</span><span class="number">-29</span> | <span class="number">2019</span><span class="number">-02</span><span class="number">-27</span> <span class="number">15</span>:<span class="number">01</span>:<span class="number">22</span> | <span class="number">2019</span><span class="number">-02</span><span class="number">-28</span> | <span class="number">2020</span><span class="number">-02</span><span class="number">-29</span> |</span><br><span class="line">+<span class="comment">--------------------+------------+---------------------+------------+------------+</span></span><br><span class="line"><span class="number">11</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.000</span> sec)</span><br><span class="line"></span><br><span class="line">+<span class="comment">--------------------+------------+---------------------+------------+------------+</span></span><br><span class="line">| <span class="keyword">name</span>               | birthday   | today               | cur        | <span class="keyword">next</span>       |</span><br><span class="line">+<span class="comment">--------------------+------------+---------------------+------------+------------+</span></span><br><span class="line">| Facello Georgi     | <span class="number">1953</span><span class="number">-09</span><span class="number">-02</span> | <span class="number">2019</span><span class="number">-02</span><span class="number">-27</span> <span class="number">15</span>:<span class="number">01</span>:<span class="number">22</span> | <span class="number">2019</span><span class="number">-09</span><span class="number">-02</span> | <span class="number">2020</span><span class="number">-09</span><span class="number">-02</span> |</span><br><span class="line">| Simmel Bezalel     | <span class="number">1964</span><span class="number">-06</span><span class="number">-02</span> | <span class="number">2019</span><span class="number">-02</span><span class="number">-27</span> <span class="number">15</span>:<span class="number">01</span>:<span class="number">22</span> | <span class="number">2019</span><span class="number">-06</span><span class="number">-02</span> | <span class="number">2020</span><span class="number">-06</span><span class="number">-02</span> |</span><br><span class="line">| Bamford Parto      | <span class="number">1959</span><span class="number">-12</span><span class="number">-03</span> | <span class="number">2019</span><span class="number">-02</span><span class="number">-27</span> <span class="number">15</span>:<span class="number">01</span>:<span class="number">22</span> | <span class="number">2019</span><span class="number">-12</span><span class="number">-03</span> | <span class="number">2020</span><span class="number">-12</span><span class="number">-03</span> |</span><br><span class="line">| Koblick Chirstian  | <span class="number">1954</span><span class="number">-05</span><span class="number">-01</span> | <span class="number">2019</span><span class="number">-02</span><span class="number">-27</span> <span class="number">15</span>:<span class="number">01</span>:<span class="number">22</span> | <span class="number">2019</span><span class="number">-05</span><span class="number">-01</span> | <span class="number">2020</span><span class="number">-05</span><span class="number">-01</span> |</span><br><span class="line">| Maliniak Kyoichi   | <span class="number">1955</span><span class="number">-01</span><span class="number">-21</span> | <span class="number">2019</span><span class="number">-02</span><span class="number">-27</span> <span class="number">15</span>:<span class="number">01</span>:<span class="number">22</span> | <span class="number">2019</span><span class="number">-01</span><span class="number">-21</span> | <span class="number">2020</span><span class="number">-01</span><span class="number">-21</span> |</span><br><span class="line">| Preusig Anneke     | <span class="number">1953</span><span class="number">-04</span><span class="number">-20</span> | <span class="number">2019</span><span class="number">-02</span><span class="number">-27</span> <span class="number">15</span>:<span class="number">01</span>:<span class="number">22</span> | <span class="number">2019</span><span class="number">-04</span><span class="number">-20</span> | <span class="number">2020</span><span class="number">-04</span><span class="number">-20</span> |</span><br><span class="line">| Zielinski Tzvetan  | <span class="number">1957</span><span class="number">-05</span><span class="number">-23</span> | <span class="number">2019</span><span class="number">-02</span><span class="number">-27</span> <span class="number">15</span>:<span class="number">01</span>:<span class="number">22</span> | <span class="number">2019</span><span class="number">-05</span><span class="number">-23</span> | <span class="number">2020</span><span class="number">-05</span><span class="number">-23</span> |</span><br><span class="line">| Kalloufi Saniya    | <span class="number">1958</span><span class="number">-02</span><span class="number">-19</span> | <span class="number">2019</span><span class="number">-02</span><span class="number">-27</span> <span class="number">15</span>:<span class="number">01</span>:<span class="number">22</span> | <span class="number">2019</span><span class="number">-02</span><span class="number">-19</span> | <span class="number">2020</span><span class="number">-02</span><span class="number">-19</span> |</span><br><span class="line">| Peac Sumant        | <span class="number">1952</span><span class="number">-04</span><span class="number">-19</span> | <span class="number">2019</span><span class="number">-02</span><span class="number">-27</span> <span class="number">15</span>:<span class="number">01</span>:<span class="number">22</span> | <span class="number">2019</span><span class="number">-04</span><span class="number">-19</span> | <span class="number">2020</span><span class="number">-04</span><span class="number">-19</span> |</span><br><span class="line">| Piveteau Duangkaew | <span class="number">1963</span><span class="number">-06</span><span class="number">-01</span> | <span class="number">2019</span><span class="number">-02</span><span class="number">-27</span> <span class="number">15</span>:<span class="number">01</span>:<span class="number">22</span> | <span class="number">2019</span><span class="number">-06</span><span class="number">-01</span> | <span class="number">2020</span><span class="number">-06</span><span class="number">-01</span> |</span><br><span class="line">| David Jiang        | <span class="number">1972</span><span class="number">-02</span><span class="number">-29</span> | <span class="number">2019</span><span class="number">-02</span><span class="number">-27</span> <span class="number">15</span>:<span class="number">01</span>:<span class="number">22</span> | <span class="number">2019</span><span class="number">-03</span><span class="number">-01</span> | <span class="number">2020</span><span class="number">-02</span><span class="number">-29</span> |</span><br><span class="line">+<span class="comment">--------------------+------------+---------------------+------------+------------+</span></span><br><span class="line"><span class="number">11</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.000</span> sec)</span><br><span class="line"></span><br><span class="line">+<span class="comment">--------------------+------------+------------+</span></span><br><span class="line">| <span class="keyword">name</span>               | birthday   | birth_day  |</span><br><span class="line">+<span class="comment">--------------------+------------+------------+</span></span><br><span class="line">| Facello Georgi     | <span class="number">1953</span><span class="number">-09</span><span class="number">-02</span> | <span class="number">2019</span><span class="number">-09</span><span class="number">-02</span> |</span><br><span class="line">| Simmel Bezalel     | <span class="number">1964</span><span class="number">-06</span><span class="number">-02</span> | <span class="number">2019</span><span class="number">-06</span><span class="number">-02</span> |</span><br><span class="line">| Bamford Parto      | <span class="number">1959</span><span class="number">-12</span><span class="number">-03</span> | <span class="number">2019</span><span class="number">-12</span><span class="number">-03</span> |</span><br><span class="line">| Koblick Chirstian  | <span class="number">1954</span><span class="number">-05</span><span class="number">-01</span> | <span class="number">2019</span><span class="number">-05</span><span class="number">-01</span> |</span><br><span class="line">| Maliniak Kyoichi   | <span class="number">1955</span><span class="number">-01</span><span class="number">-21</span> | <span class="number">2020</span><span class="number">-01</span><span class="number">-21</span> |</span><br><span class="line">| Preusig Anneke     | <span class="number">1953</span><span class="number">-04</span><span class="number">-20</span> | <span class="number">2019</span><span class="number">-04</span><span class="number">-20</span> |</span><br><span class="line">| Zielinski Tzvetan  | <span class="number">1957</span><span class="number">-05</span><span class="number">-23</span> | <span class="number">2019</span><span class="number">-05</span><span class="number">-23</span> |</span><br><span class="line">| Kalloufi Saniya    | <span class="number">1958</span><span class="number">-02</span><span class="number">-19</span> | <span class="number">2020</span><span class="number">-02</span><span class="number">-19</span> |</span><br><span class="line">| Peac Sumant        | <span class="number">1952</span><span class="number">-04</span><span class="number">-19</span> | <span class="number">2019</span><span class="number">-04</span><span class="number">-19</span> |</span><br><span class="line">| Piveteau Duangkaew | <span class="number">1963</span><span class="number">-06</span><span class="number">-01</span> | <span class="number">2019</span><span class="number">-06</span><span class="number">-01</span> |</span><br><span class="line">| David Jiang        | <span class="number">1972</span><span class="number">-02</span><span class="number">-29</span> | <span class="number">2019</span><span class="number">-03</span><span class="number">-01</span> |</span><br><span class="line">+<span class="comment">--------------------+------------+------------+</span></span><br><span class="line"><span class="number">11</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.001</span> sec)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>分析:</p>
+<ol>
+<li>子查询a用来计算每位员工的出生日期与当前日期相差的年份, 以及当前日期.</li>
+<li>要计算某员工最近的生日, 需要在birthday列加上diff列的年数. 如果结果大于当前日期, 则年龄需要再加一年</li>
+<li>子查询b增加的两列即cur和next, 这两列分别用于表示今年和明年的生日.<ul>
+<li>注意: 如果出生日期是2月29日, 且目标日期不是闰年, 那么这两列所包含的将是2月28日,而不是3月1日</li>
+</ul>
+</li>
+<li>子查询c用来处理闰年问题.<ul>
+<li>如果出生的日期是闰年2月29日,并且当前年份不是闰年,日期会为2月28日</li>
+<li>根据出生日期是29并且目标生日是28日则代表着发生了闰年日期问题, 需要加一天达到3月1日</li>
+</ul>
+</li>
+<li>判断今年的生日是否已经过了,如果是,则返回下一年的生日, 得到最后的查询结果</li>
+</ol>
+</li>
+</ul>
+<h5 id="2-4-2-重叠问题"><a href="#2-4-2-重叠问题" class="headerlink" title="2.4.2 重叠问题"></a>2.4.2 重叠问题</h5><h5 id="2-4-3-星期数问题"><a href="#2-4-3-星期数问题" class="headerlink" title="2.4.3 星期数问题"></a>2.4.3 星期数问题</h5>
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/MySQL/" rel="tag"># MySQL</a>
+          
+            <a href="/tags/MySQL技术内幕/" rel="tag"># MySQL技术内幕</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/02/28/MySQL技术内幕:SQL编程/第二章数据类型1-3/" rel="next" title="第二章数据类型1-3">
+                <i class="fa fa-chevron-left"></i> 第二章数据类型1-3
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/02/28/MySQL技术内幕:SQL编程/第二章数据类型5-8/" rel="prev" title="第二章数据类型5-8">
+                第二章数据类型5-8 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">jinglingting</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">2</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">3</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-4-关于日期的经典SQL编程问题"><span class="nav-text">2.4 关于日期的经典SQL编程问题</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#2-4-1-生日问题"><span class="nav-text">2.4.1 生日问题</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-4-2-重叠问题"><span class="nav-text">2.4.2 重叠问题</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-4-3-星期数问题"><span class="nav-text">2.4.3 星期数问题</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">jinglingting</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.0.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+  
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
