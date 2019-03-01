@@ -104,7 +104,7 @@
 <meta property="og:site_name" content="Jing">
 <meta property="og:description" content="2.0 本章主要介绍了一些与数据库类型相关的SQL编程问题, 主要关注日期类型, 数字类型及字符类型">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-02-28T10:20:47.013Z">
+<meta property="og:updated_time" content="2019-03-01T11:34:45.861Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="第二章数据类型1-3">
 <meta name="twitter:description" content="2.0 本章主要介绍了一些与数据库类型相关的SQL编程问题, 主要关注日期类型, 数字类型及字符类型">
@@ -370,12 +370,24 @@
                 
               
 
-              <time title="Created: 2019-02-28 17:41:20 / Modified: 19:20:47" itemprop="dateCreated datePublished" datetime="2019-02-28T17:41:20+09:00">2019-02-28</time>
+              <time title="Created: 2019-02-28 17:41:20" itemprop="dateCreated datePublished" datetime="2019-02-28T17:41:20+09:00">2019-02-28</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2019-03-01 20:34:45" itemprop="dateModified" datetime="2019-03-01T20:34:45+09:00">2019-03-01</time>
               
             
           </span>
@@ -543,14 +555,38 @@
 </li>
 </ul>
 <h4 id="2-3-日期和时间类型"><a href="#2-3-日期和时间类型" class="headerlink" title="2.3 日期和时间类型"></a>2.3 日期和时间类型</h4><ul>
-<li><p>mysql数据库中有五种与日期和时间有关的数据类型, 如下表:</p>
-<ul>
-<li><p>如下表:</p>
-<p>类型| 所占空间<br>—-| —-<br>datetime| 8字节<br>date | 3字节<br>timestamp | 4字节<br>year | 1字节<br>time | 3字节</p>
-</li>
+<li>mysql数据库中有五种与日期和时间有关的数据类型, 如下表:</li>
 </ul>
-</li>
-</ul>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>所占空间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>datetime</td>
+<td>8字节</td>
+</tr>
+<tr>
+<td>date</td>
+<td>3字节</td>
+</tr>
+<tr>
+<td>timestamp</td>
+<td>4字节</td>
+</tr>
+<tr>
+<td>year</td>
+<td>1字节</td>
+</tr>
+<tr>
+<td>time</td>
+<td>3字节</td>
+</tr>
+</tbody>
+</table>
 <h5 id="2-3-1-DATETIME和DATE"><a href="#2-3-1-DATETIME和DATE" class="headerlink" title="2.3.1 DATETIME和DATE"></a>2.3.1 DATETIME和DATE</h5><ul>
 <li>在mysql数据库中, 对日期和时间的输入格式的要求是非常宽松的, 一下的输入都可以视为日期类型<ul>
 <li>2011-01-01 00:01:10</li>

@@ -104,7 +104,7 @@
 <meta property="og:site_name" content="Jing">
 <meta property="og:description" content="2.5 数字类型">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-02-28T10:21:11.176Z">
+<meta property="og:updated_time" content="2019-03-01T11:35:24.461Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="第二章数据类型5-8">
 <meta name="twitter:description" content="2.5 数字类型">
@@ -370,12 +370,24 @@
                 
               
 
-              <time title="Created: 2019-02-28 17:48:20 / Modified: 19:21:11" itemprop="dateCreated datePublished" datetime="2019-02-28T17:48:20+09:00">2019-02-28</time>
+              <time title="Created: 2019-02-28 17:48:20" itemprop="dateCreated datePublished" datetime="2019-02-28T17:48:20+09:00">2019-02-28</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2019-03-01 20:35:24" itemprop="dateModified" datetime="2019-03-01T20:35:24+09:00">2019-03-01</time>
               
             
           </span>
@@ -430,10 +442,52 @@
         <h4 id="2-5-数字类型"><a href="#2-5-数字类型" class="headerlink" title="2.5 数字类型"></a>2.5 数字类型</h4><a id="more"></a>
 <h5 id="2-5-1-整型"><a href="#2-5-1-整型" class="headerlink" title="2.5.1 整型"></a>2.5.1 整型</h5><ul>
 <li>mysql数据库支持sql标准支持的整型类型:int, smallint. 此外mysql数据库也支持诸如tinyint, mediumint, bigint等类型</li>
-<li><p>各种整型占用的存储空间以及取值范围<br>  类型| 占用空间(字节) | 最小值(signed/unsigned) | 最大值(signed/unsigned)<br>  —| —| — | —<br>  tinyint | 1 | -128/0 | 127/255<br>  smallint | 2 | -32768/0 | 32767/65535<br>  mediumint | 3 | -8388608/0 | 8388607/16777215<br>  int | 4 | -2147483647/0 | 2147483647/4294967295<br>  bigint | 8 | ../0 | ../..</p>
-</li>
-<li><p>zerofill属性, 一旦启用zerofill属性, mysql数据库为列自动添加unsigned属性</p>
-</li>
+<li>各种整型占用的存储空间以及取值范围</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>占用空间(字节)</th>
+<th>最小值(signed/unsigned)</th>
+<th>最大值(signed/unsigned)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>tinyint</td>
+<td>1</td>
+<td>-128/0</td>
+<td>127/255</td>
+</tr>
+<tr>
+<td>smallint</td>
+<td>2</td>
+<td>-32768/0</td>
+<td>32767/65535</td>
+</tr>
+<tr>
+<td>mediumint</td>
+<td>3</td>
+<td>-8388608/0</td>
+<td>8388607/16777215</td>
+</tr>
+<tr>
+<td>int</td>
+<td>4</td>
+<td>-2147483647/0</td>
+<td>2147483647/4294967295</td>
+</tr>
+<tr>
+<td>bigint</td>
+<td>8</td>
+<td>../0</td>
+<td>../..</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>zerofill属性, 一旦启用zerofill属性, mysql数据库为列自动添加unsigned属性</li>
 </ul>
 <h5 id="2-5-2-浮点型-非精确型"><a href="#2-5-2-浮点型-非精确型" class="headerlink" title="2.5.2 浮点型(非精确型)"></a>2.5.2 浮点型(非精确型)</h5><ul>
 <li>mysql数据库支持两种浮点类型: 单精度的float类型和双精度的double precision类型.</li>
