@@ -415,19 +415,6 @@
           
             
             
-              
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-            
-                <span class="post-meta-item-text">Comments: </span>
-                <a href="/2019/02/25/MySQL技术内幕:SQL编程/MySQL技术内幕-SQL编程-总纲/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count gitment-comments-count" data-xid="/2019/02/25/MySQL技术内幕:SQL编程/MySQL技术内幕-SQL编程-总纲/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
           
 
           
@@ -858,7 +845,7 @@
     <!-- LOCAL: You can save these files to your site and update links -->
 
   
-  <script src="https://cdn.jsdelivr.net/gh/theme-next/theme-next-gitment@1/gitmint.browser.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/theme-next/theme-next-gitment@1/gitment.browser.js"></script>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/theme-next/theme-next-gitment@1/default.css">
 <!-- END LOCAL -->
@@ -872,12 +859,10 @@
 
 <script>
   function renderGitment() {
-    var gitment = new Gitmint({
+    var gitment = new Gitment({
       id: window.location.pathname,
       owner: 'jinglingting',
       repo: 'jinglingting.github.io',
-      
-        lang: '' || navigator.language || navigator.systemLanguage || navigator.userLanguage,
       
       oauth: {
       
