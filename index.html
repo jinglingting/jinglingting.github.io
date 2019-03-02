@@ -323,6 +323,184 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/02/MySQL优化/碎片整理/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="jinglingting">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jing">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2019/03/02/MySQL优化/碎片整理/" class="post-title-link" itemprop="url">MySQL碎片整理</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2019-03-02 11:59:16 / Modified: 13:03:24" itemprop="dateCreated datePublished" datetime="2019-03-02T11:59:16+09:00">2019-03-02</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/category/MySQL优化/" itemprop="url" rel="index"><span itemprop="name">MySQL优化</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h3 id="存储引擎为MyISAM-定期碎片整理"><a href="#存储引擎为MyISAM-定期碎片整理" class="headerlink" title="存储引擎为MyISAM, 定期碎片整理"></a>存储引擎为MyISAM, 定期碎片整理</h3><ul>
+<li>对表存储引擎为MyISAM进行整理, 使用 <code>optimize table table_name;</code></li>
+<li>对表存储引擎为InnoDB进行整理, 使用 <code>alter table table_name engine=innodb;</code><ul>
+<li>对于存储引擎为InnoDb的表整理, 也可以使用 <code>optimize table table_name</code>, 只是会映射为<code>alter table ...</code>的命令</li>
+<li>MySQL手册中提到<blockquote>
+<p>For InnoDB tables, OPTIMIZE TABLE is mapped to ALTER TABLE … FORCE, which rebuilds the table<br>to update index statistics and free unused space in the clustered index. This is displayed in the output of<br>For InnoDB tables, OPTIMIZE TABLE is mapped to ALTER TABLE … FORCE, which rebuilds the table<br>to update index statistics and free unused space in the clustered index. This is displayed in the output of<br>OPTIMIZE TABLE when you run it on an InnoDB table, as shown here:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&gt;mysql&gt; OPTIMIZE TABLE foo;</span><br><span class="line">&gt;+----------+----------+----------+-------------------------------------------------------------------+</span><br><span class="line">&gt;| Table    | Op       | Msg_type | Msg_text                                                          |</span><br><span class="line">&gt;+----------+----------+----------+-------------------------------------------------------------------+</span><br><span class="line">&gt;| test.foo | optimize | note     | Table does not support optimize, doing recreate + analyze instead |</span><br><span class="line">&gt;| test.foo | optimize | status   | OK                                                                |</span><br><span class="line">&gt;+----------+----------+----------+-------------------------------------------------------------------+</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+</li>
+</ul>
+</li>
+</ul>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2019/03/02/MySQL优化/碎片整理/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/28/MySQL技术内幕:SQL编程/第二章数据类型5-8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1579,7 +1757,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-count">8</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -1596,7 +1774,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">2</span>
+                      
+                    
+                    <span class="site-state-item-count">3</span>
                     <span class="site-state-item-name">categories</span>
                   </a>
                 </div>
@@ -1615,7 +1795,11 @@
                     
                       
                     
-                    <span class="site-state-item-count">3</span>
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">5</span>
                     <span class="site-state-item-name">tags</span>
                   </a>
                 </div>

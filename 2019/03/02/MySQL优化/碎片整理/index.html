@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.0.0',
+    sidebar: {"position":"right","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false,"dimmer":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="存储引擎为MyISAM, 定期碎片整理 对表存储引擎为MyISAM进行整理, 使用 optimize table table_name; 对表存储引擎为InnoDB进行整理, 使用 alter table table_name engine=innodb; 对于存储引擎为InnoDb的表整理, 也可以使用 optimize table table_name, 只是会映射为alter table .">
+<meta name="keywords" content="MySQL,MySQL优化,MySQL碎片整理">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL碎片整理">
+<meta property="og:url" content="http://yoursite.com/2019/03/02/MySQL优化/碎片整理/index.html">
+<meta property="og:site_name" content="Jing">
+<meta property="og:description" content="存储引擎为MyISAM, 定期碎片整理 对表存储引擎为MyISAM进行整理, 使用 optimize table table_name; 对表存储引擎为InnoDB进行整理, 使用 alter table table_name engine=innodb; 对于存储引擎为InnoDb的表整理, 也可以使用 optimize table table_name, 只是会映射为alter table .">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-03-02T04:03:24.729Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MySQL碎片整理">
+<meta name="twitter:description" content="存储引擎为MyISAM, 定期碎片整理 对表存储引擎为MyISAM进行整理, 使用 optimize table table_name; 对表存储引擎为InnoDB进行整理, 使用 alter table table_name engine=innodb; 对于存储引擎为InnoDb的表整理, 也可以使用 optimize table table_name, 只是会映射为alter table .">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/03/02/MySQL优化/碎片整理/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>MySQL碎片整理 | Jing</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jing</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">生命不息,折腾不止.</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>Categories</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/02/MySQL优化/碎片整理/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="jinglingting">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jing">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">MySQL碎片整理
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2019-03-02 11:59:16 / Modified: 13:03:24" itemprop="dateCreated datePublished" datetime="2019-03-02T11:59:16+09:00">2019-03-02</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/category/MySQL优化/" itemprop="url" rel="index"><span itemprop="name">MySQL优化</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="存储引擎为MyISAM-定期碎片整理"><a href="#存储引擎为MyISAM-定期碎片整理" class="headerlink" title="存储引擎为MyISAM, 定期碎片整理"></a>存储引擎为MyISAM, 定期碎片整理</h3><ul>
+<li>对表存储引擎为MyISAM进行整理, 使用 <code>optimize table table_name;</code></li>
+<li>对表存储引擎为InnoDB进行整理, 使用 <code>alter table table_name engine=innodb;</code><ul>
+<li>对于存储引擎为InnoDb的表整理, 也可以使用 <code>optimize table table_name</code>, 只是会映射为<code>alter table ...</code>的命令</li>
+<li>MySQL手册中提到<blockquote>
+<p>For InnoDB tables, OPTIMIZE TABLE is mapped to ALTER TABLE … FORCE, which rebuilds the table<br>to update index statistics and free unused space in the clustered index. This is displayed in the output of<br>For InnoDB tables, OPTIMIZE TABLE is mapped to ALTER TABLE … FORCE, which rebuilds the table<br>to update index statistics and free unused space in the clustered index. This is displayed in the output of<br>OPTIMIZE TABLE when you run it on an InnoDB table, as shown here:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&gt;mysql&gt; OPTIMIZE TABLE foo;</span><br><span class="line">&gt;+----------+----------+----------+-------------------------------------------------------------------+</span><br><span class="line">&gt;| Table    | Op       | Msg_type | Msg_text                                                          |</span><br><span class="line">&gt;+----------+----------+----------+-------------------------------------------------------------------+</span><br><span class="line">&gt;| test.foo | optimize | note     | Table does not support optimize, doing recreate + analyze instead |</span><br><span class="line">&gt;| test.foo | optimize | status   | OK                                                                |</span><br><span class="line">&gt;+----------+----------+----------+-------------------------------------------------------------------+</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+</li>
+</ul>
+</li>
+</ul>
+<a id="more"></a>
+<h4 id="1-创建表-然后添加数据-确定表存储的物理文件的大小以及表的信息"><a href="#1-创建表-然后添加数据-确定表存储的物理文件的大小以及表的信息" class="headerlink" title="1.创建表,然后添加数据,确定表存储的物理文件的大小以及表的信息"></a>1.创建表,然后添加数据,确定表存储的物理文件的大小以及表的信息</h4><ul>
+<li><p>创建数据表,添加数据,然后复制数据使表中数据有一定规模</p>
+  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">MariaDB [mysql_optimization]&gt; create table test100(id int unsigned, name varchar(32))engine=myisam;</span><br><span class="line">Query OK, 0 rows affected (0.004 sec)</span><br><span class="line"></span><br><span class="line">MariaDB [mysql_optimization]&gt; insert into test100 values(1, 'aaa'), (2, 'bbb'), (3, 'ccc');</span><br><span class="line">Query OK, 3 rows affected (0.001 sec)</span><br><span class="line">Records: 3  Duplicates: 0  Warnings: 0</span><br><span class="line"></span><br><span class="line">MariaDB [mysql_optimization]&gt; insert into test100 select id,name from test100;</span><br><span class="line">Query OK, 3 rows affected (0.001 sec)</span><br><span class="line">Records: 3  Duplicates: 0  Warnings: 0</span><br><span class="line"></span><br><span class="line"><span class="comment"># 一直复制直到</span></span><br><span class="line">MariaDB [mysql_optimization]&gt; select count(*) from test100;</span><br><span class="line">+<span class="comment">----------+</span></span><br><span class="line">| count(*) |</span><br><span class="line">+<span class="comment">----------+</span></span><br><span class="line">|  3145728 |</span><br><span class="line">+<span class="comment">----------+</span></span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">0.000</span> sec)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>定位mysql存储文件的位置</p>
+  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">MariaDB [mysql_optimization]&gt; show variables like '%datadir%';</span><br><span class="line">+<span class="comment">---------------+-----------------+</span></span><br><span class="line">| Variable_name | Value           |</span><br><span class="line">+<span class="comment">---------------+-----------------+</span></span><br><span class="line">| datadir       | /var/lib/mysql/ |</span><br><span class="line">+<span class="comment">---------------+-----------------+</span></span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">0.002</span> sec)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看此时mysql存储文件的大小</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">my-arch<span class="comment"># du test100*</span></span><br><span class="line">4       test100.frm</span><br><span class="line">61444   test100.MYD</span><br><span class="line">4       test100.MYI</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>通过information_schema数据库查看mysql_optimization数据库的test100表的信息:</p>
+  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">MariaDB [information_schema]&gt; select * from tables where table_schema='mysql_optimization' and table_name='test100'\G</span><br><span class="line">*************************** 1. row ***************************</span><br><span class="line">   TABLE_CATALOG: def</span><br><span class="line">    TABLE_SCHEMA: mysql_optimization</span><br><span class="line">      TABLE_NAME: test100</span><br><span class="line">      TABLE_TYPE: BASE TABLE</span><br><span class="line">          ENGINE: MyISAM</span><br><span class="line">         VERSION: 10</span><br><span class="line">      ROW_FORMAT: Dynamic</span><br><span class="line">      TABLE_ROWS: 3145728</span><br><span class="line">  AVG_ROW_LENGTH: 20</span><br><span class="line">     DATA_LENGTH: 62914560</span><br><span class="line"> MAX_DATA_LENGTH: 281474976710655</span><br><span class="line">    INDEX_LENGTH: 1024</span><br><span class="line">       DATA_FREE: 0</span><br><span class="line">  AUTO_INCREMENT: NULL</span><br><span class="line">     CREATE_TIME: 2019-03-02 09:53:50</span><br><span class="line">     UPDATE_TIME: 2019-03-02 09:55:08</span><br><span class="line">      CHECK_TIME: NULL</span><br><span class="line"> TABLE_COLLATION: utf8mb4_unicode_ci</span><br><span class="line">        <span class="keyword">CHECKSUM</span>: <span class="literal">NULL</span></span><br><span class="line">  CREATE_OPTIONS:</span><br><span class="line">   TABLE_COMMENT:</span><br><span class="line">MAX_INDEX_LENGTH: <span class="number">17179868160</span></span><br><span class="line">       <span class="keyword">TEMPORARY</span>: N</span><br><span class="line"><span class="number">1</span> <span class="keyword">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.001</span> sec)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="2-执行删除数据操作-再次确认表的物理文件大小以及表的信息"><a href="#2-执行删除数据操作-再次确认表的物理文件大小以及表的信息" class="headerlink" title="2.执行删除数据操作, 再次确认表的物理文件大小以及表的信息"></a>2.执行删除数据操作, 再次确认表的物理文件大小以及表的信息</h4><ul>
+<li><p>然后执行delete操作, 删除id%3=1的数据,因为都是复制,能删除掉1/3的数据</p>
+  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">MariaDB [mysql_optimization]&gt; delete from test100 where id%3 = 1;</span><br><span class="line">Query OK, 1048576 rows affected (7.770 sec)</span><br><span class="line"></span><br><span class="line">MariaDB [mysql_optimization]&gt; select count(*) from test100;</span><br><span class="line">+<span class="comment">----------+</span></span><br><span class="line">| count(*) |</span><br><span class="line">+<span class="comment">----------+</span></span><br><span class="line">|  2097152 |</span><br><span class="line">+<span class="comment">----------+</span></span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">0.000</span> sec)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>再次查看mysql存储文件的大小</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">my-arch<span class="comment"># du test100*</span></span><br><span class="line">4       test100.frm</span><br><span class="line">61444   test100.MYD</span><br><span class="line">4       test100.MYI</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>再次通过information_schema数据库查看test100表的信息</p>
+  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">MariaDB [information_schema]&gt; select * from tables where table_schema='mysql_optimization' and table_name='test100'\G</span><br><span class="line">*************************** 1. row ***************************</span><br><span class="line">   TABLE_CATALOG: def</span><br><span class="line">    TABLE_SCHEMA: mysql_optimization</span><br><span class="line">      TABLE_NAME: test100</span><br><span class="line">      TABLE_TYPE: BASE TABLE</span><br><span class="line">          ENGINE: MyISAM</span><br><span class="line">         VERSION: 10</span><br><span class="line">      ROW_FORMAT: Dynamic</span><br><span class="line">      TABLE_ROWS: 2097152</span><br><span class="line">  AVG_ROW_LENGTH: 20</span><br><span class="line">     DATA_LENGTH: 62914560</span><br><span class="line"> MAX_DATA_LENGTH: 281474976710655</span><br><span class="line">    INDEX_LENGTH: 1024</span><br><span class="line">       DATA_FREE: 20971520</span><br><span class="line">  AUTO_INCREMENT: NULL</span><br><span class="line">     CREATE_TIME: 2019-03-02 09:53:50</span><br><span class="line">     UPDATE_TIME: 2019-03-02 09:58:59</span><br><span class="line">      CHECK_TIME: NULL</span><br><span class="line"> TABLE_COLLATION: utf8mb4_unicode_ci</span><br><span class="line">        <span class="keyword">CHECKSUM</span>: <span class="literal">NULL</span></span><br><span class="line">  CREATE_OPTIONS:</span><br><span class="line">   TABLE_COMMENT:</span><br><span class="line">MAX_INDEX_LENGTH: <span class="number">17179868160</span></span><br><span class="line">       <span class="keyword">TEMPORARY</span>: N</span><br><span class="line"><span class="number">1</span> <span class="keyword">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.001</span> sec)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="3-对表进行optimize操作-再次查看表的物理文件大小以及表的信息"><a href="#3-对表进行optimize操作-再次查看表的物理文件大小以及表的信息" class="headerlink" title="3.对表进行optimize操作,再次查看表的物理文件大小以及表的信息"></a>3.对表进行optimize操作,再次查看表的物理文件大小以及表的信息</h4><ul>
+<li><p>数据存储文件的大小没有变化,对于这种情况,应该对使用MyISAM存储引擎的表定期整理.</p>
+  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">MariaDB [mysql_optimization]&gt; optimize table test100;</span><br><span class="line">+<span class="comment">----------------------------+----------+----------+----------+</span></span><br><span class="line">| Table                      | Op       | Msg_type | Msg_text |</span><br><span class="line">+<span class="comment">----------------------------+----------+----------+----------+</span></span><br><span class="line">| mysql_optimization.test100 | <span class="keyword">optimize</span> | <span class="keyword">status</span>   | OK       |</span><br><span class="line">+<span class="comment">----------------------------+----------+----------+----------+</span></span><br><span class="line"><span class="number">1</span> <span class="keyword">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.564</span> sec)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>然后再次查看mysql存储文件的大小</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">my-arch<span class="comment"># du test100*</span></span><br><span class="line">4       test100.frm</span><br><span class="line">40960   test100.MYD</span><br><span class="line">4       test100.MYI</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>第三次通过information_schema查看test100表的信息</p>
+  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">MariaDB [information_schema]&gt; select * from tables where table_schema='mysql_optimization' and table_name='test100'\G</span><br><span class="line">*************************** 1. row ***************************</span><br><span class="line">   TABLE_CATALOG: def</span><br><span class="line">    TABLE_SCHEMA: mysql_optimization</span><br><span class="line">      TABLE_NAME: test100</span><br><span class="line">      TABLE_TYPE: BASE TABLE</span><br><span class="line">          ENGINE: MyISAM</span><br><span class="line">         VERSION: 10</span><br><span class="line">      ROW_FORMAT: Dynamic</span><br><span class="line">      TABLE_ROWS: 2097152</span><br><span class="line">  AVG_ROW_LENGTH: 20</span><br><span class="line">     DATA_LENGTH: 41943040</span><br><span class="line"> MAX_DATA_LENGTH: 281474976710655</span><br><span class="line">    INDEX_LENGTH: 1024</span><br><span class="line">       DATA_FREE: 0</span><br><span class="line">  AUTO_INCREMENT: NULL</span><br><span class="line">     CREATE_TIME: 2019-03-02 09:53:50</span><br><span class="line">     UPDATE_TIME: 2019-03-02 10:01:30</span><br><span class="line">      CHECK_TIME: 2019-03-02 10:01:30</span><br><span class="line"> TABLE_COLLATION: utf8mb4_unicode_ci</span><br><span class="line">        <span class="keyword">CHECKSUM</span>: <span class="literal">NULL</span></span><br><span class="line">  CREATE_OPTIONS:</span><br><span class="line">   TABLE_COMMENT:</span><br><span class="line">MAX_INDEX_LENGTH: <span class="number">17179868160</span></span><br><span class="line">       <span class="keyword">TEMPORARY</span>: N</span><br><span class="line"><span class="number">1</span> <span class="keyword">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.001</span> sec)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="4-分析"><a href="#4-分析" class="headerlink" title="4.分析:"></a>4.分析:</h4><ol>
+<li>在使用delete后:<ul>
+<li>test100表的数据文件没有发生变化;</li>
+<li>通过information_schema数据库的TABLES表查看test100的信息发现TABLE_ROWS,DATA_LENGTH,DATA_FREE字段发生变化.</li>
+</ul>
+</li>
+<li>在使用optimize 整理test100表后:<ul>
+<li>test100表的数据文件大小发生了变化,减小了进1/3</li>
+<li>information_schema的TABLES表中的关于test100表的信息发生变化.data_free项为0了.而且之前的data_length - data_free = 此次的data_length</li>
+</ul>
+</li>
+</ol>
+<h4 id="5-命令补充"><a href="#5-命令补充" class="headerlink" title="5.命令补充:"></a>5.命令补充:</h4><ul>
+<li>直接使用命令 <code>show table status like &#39;test100&#39;\G</code>即可查看test100的信息,效果等同于在information_schema数据库通过TABLES查看  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">MariaDB [mysql_optimization]&gt; show table status like 'test100'\G</span><br><span class="line">*************************** 1. row ***************************</span><br><span class="line">            Name: test100</span><br><span class="line">          Engine: MyISAM</span><br><span class="line">         Version: 10</span><br><span class="line">      Row_format: Dynamic</span><br><span class="line">            Rows: 2097152</span><br><span class="line">  Avg_row_length: 20</span><br><span class="line">     Data_length: 41943040</span><br><span class="line"> Max_data_length: 281474976710655</span><br><span class="line">    Index_length: 1024</span><br><span class="line">       Data_free: 0</span><br><span class="line">  Auto_increment: NULL</span><br><span class="line">     Create_time: 2019-03-02 09:53:50</span><br><span class="line">     Update_time: 2019-03-02 10:01:30</span><br><span class="line">      Check_time: 2019-03-02 10:01:30</span><br><span class="line">       Collation: utf8mb4_unicode_ci</span><br><span class="line">        <span class="keyword">Checksum</span>: <span class="literal">NULL</span></span><br><span class="line">  Create_options:</span><br><span class="line">         <span class="keyword">Comment</span>:</span><br><span class="line">Max_index_length: <span class="number">17179868160</span></span><br><span class="line">       <span class="keyword">Temporary</span>: N</span><br><span class="line"><span class="number">1</span> <span class="keyword">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.001</span> sec)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="存储引擎为InnoDB-进行碎片整理"><a href="#存储引擎为InnoDB-进行碎片整理" class="headerlink" title="存储引擎为InnoDB, 进行碎片整理"></a>存储引擎为InnoDB, 进行碎片整理</h3><h4 id="1-创建表-然后添加数据-确定表存储的物理文件的大小以及表的信息-1"><a href="#1-创建表-然后添加数据-确定表存储的物理文件的大小以及表的信息-1" class="headerlink" title="1.创建表,然后添加数据,确定表存储的物理文件的大小以及表的信息"></a>1.创建表,然后添加数据,确定表存储的物理文件的大小以及表的信息</h4><ul>
+<li><p>创建数据表,添加数据,然后复制数据使表中数据有一定规模</p>
+  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">MariaDB [mysql_optimization]&gt; create table test200(id int unsigned, name varchar(32))engine=innodb;</span><br><span class="line">Query OK, 0 rows affected (0.015 sec)</span><br><span class="line"></span><br><span class="line">MariaDB [mysql_optimization]&gt; insert into test200 values(1, 'aaa'), (2, 'bbb'), (3, 'ccc');</span><br><span class="line">Query OK, 3 rows affected (0.004 sec)</span><br><span class="line">Records: 3  Duplicates: 0  Warnings: 0</span><br><span class="line"></span><br><span class="line">MariaDB [mysql_optimization]&gt; insert into test200 select id,name from test200;</span><br><span class="line">Query OK, 3 rows affected (0.004 sec)</span><br><span class="line">Records: 3  Duplicates: 0  Warnings: 0</span><br><span class="line"></span><br><span class="line"><span class="comment"># 一直复制直到</span></span><br><span class="line">MariaDB [mysql_optimization]&gt; select count(*) from test200;</span><br><span class="line">+<span class="comment">----------+</span></span><br><span class="line">| count(*) |</span><br><span class="line">+<span class="comment">----------+</span></span><br><span class="line">|  3145728 |</span><br><span class="line">+<span class="comment">----------+</span></span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">5.036</span> sec)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>定位mysql存储文件的位置</p>
+  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">MariaDB [mysql_optimization]&gt; show variables like '%datadir%';</span><br><span class="line">+<span class="comment">---------------+-----------------+</span></span><br><span class="line">| Variable_name | Value           |</span><br><span class="line">+<span class="comment">---------------+-----------------+</span></span><br><span class="line">| datadir       | /var/lib/mysql/ |</span><br><span class="line">+<span class="comment">---------------+-----------------+</span></span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">0.002</span> sec)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看此时mysql存储文件的大小</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">my-arch<span class="comment"># du test200*</span></span><br><span class="line">4       test200.frm</span><br><span class="line">122884  test200.ibd</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>通过<code>show table status like &#39;&#39;test200&#39;\G</code>查看test200表的信息:</p>
+  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">MariaDB [mysql_optimization]&gt; show table status like 'test200'\G</span><br><span class="line">*************************** 1. row ***************************</span><br><span class="line">            Name: test200</span><br><span class="line">          Engine: InnoDB</span><br><span class="line">         Version: 10</span><br><span class="line">      Row_format: Dynamic</span><br><span class="line">            Rows: 3139439</span><br><span class="line">  Avg_row_length: 34</span><br><span class="line">     Data_length: 107626496</span><br><span class="line"> Max_data_length: 0</span><br><span class="line">    Index_length: 0</span><br><span class="line">       Data_free: 7340032</span><br><span class="line">  Auto_increment: NULL</span><br><span class="line">     Create_time: 2019-03-02 10:58:38</span><br><span class="line">     Update_time: 2019-03-02 10:59:52</span><br><span class="line">      Check_time: NULL</span><br><span class="line">       Collation: utf8mb4_unicode_ci</span><br><span class="line">        <span class="keyword">Checksum</span>: <span class="literal">NULL</span></span><br><span class="line">  Create_options:</span><br><span class="line">         <span class="keyword">Comment</span>:</span><br><span class="line">Max_index_length: <span class="number">0</span></span><br><span class="line">       <span class="keyword">Temporary</span>: N</span><br><span class="line"><span class="number">1</span> <span class="keyword">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.001</span> sec)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="2-执行删除数据操作-再次确认表的物理文件大小以及表的信息-1"><a href="#2-执行删除数据操作-再次确认表的物理文件大小以及表的信息-1" class="headerlink" title="2.执行删除数据操作, 再次确认表的物理文件大小以及表的信息"></a>2.执行删除数据操作, 再次确认表的物理文件大小以及表的信息</h4><ul>
+<li><p>然后执行delete操作, 删除id%3=1的数据,因为都是复制,能删除掉1/3的数据</p>
+  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">MariaDB [mysql_optimization]&gt; delete from test200 where id%3 = 1;</span><br><span class="line">Query OK, 1048576 rows affected (6.859 sec)</span><br><span class="line"></span><br><span class="line">MariaDB [mysql_optimization]&gt; select count(*) from test200;</span><br><span class="line">+<span class="comment">----------+</span></span><br><span class="line">| count(*) |</span><br><span class="line">+<span class="comment">----------+</span></span><br><span class="line">|  2097152 |</span><br><span class="line">+<span class="comment">----------+</span></span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">2.147</span> sec)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>再次查看mysql存储文件的大小</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">my-arch<span class="comment"># du test200*</span></span><br><span class="line">4       test200.frm</span><br><span class="line">122884  test200.ibd</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>通过<code>show table status like &#39;&#39;test200&#39;\G</code>查看test200表的信息:</p>
+  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">MariaDB [mysql_optimization]&gt; show table status like 'test200'\G</span><br><span class="line">*************************** 1. row ***************************</span><br><span class="line">            Name: test200</span><br><span class="line">          Engine: InnoDB</span><br><span class="line">         Version: 10</span><br><span class="line">      Row_format: Dynamic</span><br><span class="line">            Rows: 2089093</span><br><span class="line">  Avg_row_length: 54</span><br><span class="line">     Data_length: 113901568</span><br><span class="line"> Max_data_length: 0</span><br><span class="line">    Index_length: 0</span><br><span class="line">       Data_free: 7340032</span><br><span class="line">  Auto_increment: NULL</span><br><span class="line">     Create_time: 2019-03-02 10:58:38</span><br><span class="line">     Update_time: 2019-03-02 11:06:57</span><br><span class="line">      Check_time: NULL</span><br><span class="line">       Collation: utf8mb4_unicode_ci</span><br><span class="line">        <span class="keyword">Checksum</span>: <span class="literal">NULL</span></span><br><span class="line">  Create_options:</span><br><span class="line">         <span class="keyword">Comment</span>:</span><br><span class="line">Max_index_length: <span class="number">0</span></span><br><span class="line">       <span class="keyword">Temporary</span>: N</span><br><span class="line"><span class="number">1</span> <span class="keyword">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.001</span> sec)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="3-对表进行optimize操作-再次查看表的物理文件大小以及表的信息-1"><a href="#3-对表进行optimize操作-再次查看表的物理文件大小以及表的信息-1" class="headerlink" title="3.对表进行optimize操作,再次查看表的物理文件大小以及表的信息"></a>3.对表进行optimize操作,再次查看表的物理文件大小以及表的信息</h4><ul>
+<li><p>对表进行整理. <code>alter table test200 engine=innodb</code></p>
+  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">MariaDB [mysql_optimization]&gt; alter table test200 engine=innodb;</span><br><span class="line">Query OK, 0 rows affected (5.931 sec)</span><br><span class="line">Records: 0  Duplicates: 0  Warnings: 0</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>然后再次查看mysql存储文件的大小</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">my-arch<span class="comment"># du test200*</span></span><br><span class="line">4       test200.frm</span><br><span class="line">90116   test200.ibd</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>通过<code>show table status like &#39;&#39;test200&#39;\G</code>查看test200表的信息:</p>
+  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">MariaDB [mysql_optimization]&gt; show table status like 'test200'\G</span><br><span class="line">*************************** 1. row ***************************</span><br><span class="line">            Name: test200</span><br><span class="line">          Engine: InnoDB</span><br><span class="line">         Version: 10</span><br><span class="line">      Row_format: Dynamic</span><br><span class="line">            Rows: 2092860</span><br><span class="line">  Avg_row_length: 41</span><br><span class="line">     Data_length: 86622208</span><br><span class="line"> Max_data_length: 0</span><br><span class="line">    Index_length: 0</span><br><span class="line">       Data_free: 2097152</span><br><span class="line">  Auto_increment: NULL</span><br><span class="line">     Create_time: 2019-03-02 11:29:23</span><br><span class="line">     Update_time: NULL</span><br><span class="line">      Check_time: NULL</span><br><span class="line">       Collation: utf8mb4_unicode_ci</span><br><span class="line">        <span class="keyword">Checksum</span>: <span class="literal">NULL</span></span><br><span class="line">  Create_options:</span><br><span class="line">         <span class="keyword">Comment</span>:</span><br><span class="line">Max_index_length: <span class="number">0</span></span><br><span class="line">       <span class="keyword">Temporary</span>: N</span><br><span class="line"><span class="number">1</span> <span class="keyword">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.001</span> sec)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/MySQL/" rel="tag"># MySQL</a>
+          
+            <a href="/tags/MySQL优化/" rel="tag"># MySQL优化</a>
+          
+            <a href="/tags/MySQL碎片整理/" rel="tag"># MySQL碎片整理</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/02/28/MySQL技术内幕:SQL编程/第二章数据类型5-8/" rel="next" title="第二章数据类型5-8">
+                <i class="fa fa-chevron-left"></i> 第二章数据类型5-8
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      
+        <div id="gitment-container"></div>
+      
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">jinglingting</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">8</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">3</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">5</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#存储引擎为MyISAM-定期碎片整理"><span class="nav-text">存储引擎为MyISAM, 定期碎片整理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-创建表-然后添加数据-确定表存储的物理文件的大小以及表的信息"><span class="nav-text">1.创建表,然后添加数据,确定表存储的物理文件的大小以及表的信息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-执行删除数据操作-再次确认表的物理文件大小以及表的信息"><span class="nav-text">2.执行删除数据操作, 再次确认表的物理文件大小以及表的信息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-对表进行optimize操作-再次查看表的物理文件大小以及表的信息"><span class="nav-text">3.对表进行optimize操作,再次查看表的物理文件大小以及表的信息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-分析"><span class="nav-text">4.分析:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-命令补充"><span class="nav-text">5.命令补充:</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#存储引擎为InnoDB-进行碎片整理"><span class="nav-text">存储引擎为InnoDB, 进行碎片整理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-创建表-然后添加数据-确定表存储的物理文件的大小以及表的信息-1"><span class="nav-text">1.创建表,然后添加数据,确定表存储的物理文件的大小以及表的信息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-执行删除数据操作-再次确认表的物理文件大小以及表的信息-1"><span class="nav-text">2.执行删除数据操作, 再次确认表的物理文件大小以及表的信息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-对表进行optimize操作-再次查看表的物理文件大小以及表的信息-1"><span class="nav-text">3.对表进行optimize操作,再次查看表的物理文件大小以及表的信息</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">jinglingting</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.0.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+  
+  
+
+
+  
+    <!-- LOCAL: You can save these files to your site and update links -->
+
+  
+  <script src="https://cdn.jsdelivr.net/gh/theme-next/theme-next-gitment@1/gitment.browser.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/theme-next/theme-next-gitment@1/default.css">
+<!-- END LOCAL -->
+
+<style>
+#gitment-container a {
+  border-bottom: none;
+}
+
+</style>
+
+<script>
+  function renderGitment() {
+    var gitment = new Gitment({
+      id: '1551495556000',
+      owner: 'jinglingting',
+      repo: 'jinglingting.github.io',
+      
+      oauth: {
+      
+      
+        client_secret: 'e8fab2e7635ac405d9932b287cfe7a6701d7193a',
+      
+        client_id: 'a96f4382de22ae6d35f6'
+      }
+    });
+    gitment.render('gitment-container');
+  }
+
+  
+    renderGitment();
+  
+</script>
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
