@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.0.0',
+    sidebar: {"position":"right","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false,"dimmer":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="问题是: 如何从一个大项目中, 迅速定位执行速度慢的语句(定位慢查询) 一.通过show status命令了解各种SQL的执行效率 二.定位执行效率较低的SQL语句(重点select) 三.通过explain分析低效率的SQL语句的执行情况 四.确定问题并采取相应的优化措施">
+<meta name="keywords" content="MySQL,MySQL优化,慢查询">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL定位慢查询">
+<meta property="og:url" content="http://yoursite.com/2019/03/02/MySQL优化/定位慢查询/index.html">
+<meta property="og:site_name" content="Jing">
+<meta property="og:description" content="问题是: 如何从一个大项目中, 迅速定位执行速度慢的语句(定位慢查询) 一.通过show status命令了解各种SQL的执行效率 二.定位执行效率较低的SQL语句(重点select) 三.通过explain分析低效率的SQL语句的执行情况 四.确定问题并采取相应的优化措施">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-03-02T04:40:50.782Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MySQL定位慢查询">
+<meta name="twitter:description" content="问题是: 如何从一个大项目中, 迅速定位执行速度慢的语句(定位慢查询) 一.通过show status命令了解各种SQL的执行效率 二.定位执行效率较低的SQL语句(重点select) 三.通过explain分析低效率的SQL语句的执行情况 四.确定问题并采取相应的优化措施">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/03/02/MySQL优化/定位慢查询/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>MySQL定位慢查询 | Jing</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jing</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">生命不息,折腾不止.</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>Categories</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/02/MySQL优化/定位慢查询/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="jinglingting">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jing">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">MySQL定位慢查询
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2019-03-02 12:36:26 / Modified: 13:40:50" itemprop="dateCreated datePublished" datetime="2019-03-02T12:36:26+09:00">2019-03-02</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/category/MySQL优化/" itemprop="url" rel="index"><span itemprop="name">MySQL优化</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="问题是-如何从一个大项目中-迅速定位执行速度慢的语句-定位慢查询"><a href="#问题是-如何从一个大项目中-迅速定位执行速度慢的语句-定位慢查询" class="headerlink" title="问题是: 如何从一个大项目中, 迅速定位执行速度慢的语句(定位慢查询)"></a>问题是: 如何从一个大项目中, 迅速定位执行速度慢的语句(定位慢查询)</h3><ul>
+<li>一.通过show status命令了解各种SQL的执行效率</li>
+<li>二.定位执行效率较低的SQL语句(重点select)</li>
+<li>三.通过explain分析低效率的SQL语句的执行情况</li>
+<li>四.确定问题并采取相应的优化措施<a id="more"></a>
+</li>
+</ul>
+<h4 id="一-通过show-status命令了解各种SQL的执行效率"><a href="#一-通过show-status命令了解各种SQL的执行效率" class="headerlink" title="一.通过show status命令了解各种SQL的执行效率"></a>一.通过show status命令了解各种SQL的执行效率</h4><ul>
+<li>比如想知道当前mysql运行的时间, 一共执行了多少次select/update/delete/insert, 当前连接等等</li>
+</ul>
+<h5 id="show-status命令"><a href="#show-status命令" class="headerlink" title="show status命令"></a>show status命令</h5><ul>
+<li>show status; 可以显示show status的所有命令</li>
+<li>show [session|global] status like …语句中like前面还有个参数<ul>
+<li>默认为session,指取出当前窗口的执行情况</li>
+<li>如果想看所有(从mysql启动到现在), 则应该使用global</li>
+</ul>
+</li>
+<li>mysql启动了多长时间: show status like “uptime”; <ul>
+<li>可以根据运行时长来判断是否需要碎片整理</li>
+</ul>
+</li>
+<li>当前执行了各种查询数量: show status like ‘com_select’/‘com_insert’/‘com_update’/‘com_delete’;<ul>
+<li>分析几种查询语句的执行次数, 就可以大致判断该项目在某种查询语句上的侧重,然后对数据库进行一些选择</li>
+<li>注意:该语句默认参数为session, 也就是会话级别, 如果想看mysql启动到现在的所有执行的语句次数, 加上global</li>
+</ul>
+</li>
+<li>连接数: show status like ‘connections’;<ul>
+<li>注意: 此处的connections不是代表的现在的连接数???</li>
+<li>如果想查看具体哪个ip连接的, 使用netstat -an(可以添加b参数列出进程号)</li>
+</ul>
+</li>
+<li>显示慢查询次数: show status like ‘slow_queries’</li>
+</ul>
+<h4 id="二-定位执行效率较低的SQL语句-重点select"><a href="#二-定位执行效率较低的SQL语句-重点select" class="headerlink" title="二.定位执行效率较低的SQL语句(重点select)"></a>二.定位执行效率较低的SQL语句(重点select)</h4><h5 id="开启MySQL的慢查询日志功能"><a href="#开启MySQL的慢查询日志功能" class="headerlink" title="开启MySQL的慢查询日志功能"></a>开启MySQL的慢查询日志功能</h5><ul>
+<li><p>查看系统是否开启慢查询日志功能</p>
+<ul>
+<li>show variables like ‘slow_query%’; 默认未开启  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">MariaDB [(none)]&gt; show variables like 'slow_query%';</span><br><span class="line">+<span class="comment">---------------------+------------------+</span></span><br><span class="line">| Variable_name       | Value            |</span><br><span class="line">+<span class="comment">---------------------+------------------+</span></span><br><span class="line">| slow_query_log      | OFF              |</span><br><span class="line">| slow_query_log_file | my-arch-slow.log |</span><br><span class="line">+<span class="comment">---------------------+------------------+</span></span><br><span class="line">2 rows in <span class="keyword">set</span> (<span class="number">0.001</span> sec)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>开启数据库的慢查询</p>
+<ul>
+<li><p>vim /etc/mysq/my.cnf/server.cnf 开启慢查询日志,然后给出慢查询日志存放位置, 慢查询时长为一秒</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[mysqld]</span><br><span class="line">slow_query_log=ON</span><br><span class="line">slow_query_log_file=my-arch-slow.log</span><br><span class="line">long_query_time=1</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>slow_query_long=ON开启慢查询日志功能,long_query_time=1设置慢查询时长</p>
+</li>
+<li>重启后, 重新连接mysql,然后查看是否成功启用  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">MariaDB [(none)]&gt; show variables like 'slow_query%';</span><br><span class="line">+<span class="comment">---------------------+------------------+</span></span><br><span class="line">| Variable_name       | Value            |</span><br><span class="line">+<span class="comment">---------------------+------------------+</span></span><br><span class="line">| slow_query_log      | ON               |</span><br><span class="line">| slow_query_log_file | my-arch-slow.log |</span><br><span class="line">+<span class="comment">---------------------+------------------+</span></span><br><span class="line">2 rows in <span class="keyword">set</span> (<span class="number">0.002</span> sec)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<h5 id="如何去定位慢查询"><a href="#如何去定位慢查询" class="headerlink" title="如何去定位慢查询"></a>如何去定位慢查询</h5><ul>
+<li>默认情况下,mysql认为10秒才是一个慢查询<ul>
+<li>显示mysql慢查询的时长: show variables like ‘long_query_time’;</li>
+</ul>
+</li>
+<li>为了学习, 修改mysql的慢查询的时间为一秒<ul>
+<li>修改mysql慢查询时长: set long_query_time = 1;</li>
+</ul>
+</li>
+<li><p>找出慢查询语句:(因为查询语句较简单, 所以修改long_query_time=0.5)</p>
+<ul>
+<li><p>show status like ‘slow_queries’;</p>
+  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">MariaDB [mysql_optimization]&gt; show status like 'slow_queries';</span><br><span class="line">+<span class="comment">---------------+-------+</span></span><br><span class="line">| Variable_name | Value |</span><br><span class="line">+<span class="comment">---------------+-------+</span></span><br><span class="line">| Slow_queries  | 1     |</span><br><span class="line">+<span class="comment">---------------+-------+</span></span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">0.001</span> sec)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>然后就可以去查看日志文件了</p>
+<ul>
+<li>日志文件保存在 /var/lib/mysql/my-arch-slow.log, 找不到可以使用find命令找出</li>
+</ul>
+</li>
+<li>日志文件中内容  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Time: 190302 12:32:58</span></span><br><span class="line"><span class="comment"># User@Host: root[root] @ localhost []</span></span><br><span class="line"><span class="comment"># Thread_id: 10  Schema: mysql_optimization  QC_hit: No</span></span><br><span class="line"><span class="comment"># Query_time: 0.729014  Lock_time: 0.000100  Rows_sent: 1  Rows_examined: 4090000</span></span><br><span class="line"><span class="comment"># Rows_affected: 0  Bytes_sent: 557</span></span><br><span class="line"><span class="keyword">SET</span> <span class="built_in">timestamp</span>=<span class="number">1551501178</span>;</span><br><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> emp <span class="keyword">where</span> empno=<span class="number">3000000</span>;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="三-通过explain分析低效率的SQL语句的执行情况"><a href="#三-通过explain分析低效率的SQL语句的执行情况" class="headerlink" title="三.通过explain分析低效率的SQL语句的执行情况"></a>三.通过explain分析低效率的SQL语句的执行情况</h4><h5 id="explain使用"><a href="#explain使用" class="headerlink" title="explain使用"></a>explain使用</h5><ul>
+<li>explain 可以帮助我们在不真正执行某个sql语句时,就知道mysql怎样执行,这样利于我们分析sql指令</li>
+<li>explian详细的使用参考MySQL的手册</li>
+<li><p>分析上面得到的慢查询</p>
+  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"> MariaDB [mysql_optimization]&gt; select * from emp where empno=3000000;</span><br><span class="line"> +<span class="comment">---------+--------+----------+-----+------------+---------+--------+--------+</span></span><br><span class="line"> | empno   | ename  | job      | mgr | hiredate   | sal     | comm   | deptno |</span><br><span class="line"> +<span class="comment">---------+--------+----------+-----+------------+---------+--------+--------+</span></span><br><span class="line"> | 3000000 | ygkJAK | SALESMAN |   1 | 2019-02-27 | 2000.00 | 400.00 |    499 |</span><br><span class="line"> +<span class="comment">---------+--------+----------+-----+------------+---------+--------+--------+</span></span><br><span class="line"> 1 row in <span class="keyword">set</span> (<span class="number">0.627</span> sec)</span><br><span class="line"></span><br><span class="line">MariaDB [mysql_optimization]&gt; <span class="keyword">explain</span> <span class="keyword">select</span> * <span class="keyword">from</span> emp <span class="keyword">where</span> deptno=<span class="number">3000000</span>;</span><br><span class="line"> +<span class="comment">------+-------------+-------+------+---------------+------+---------+------+---------+-----------------------------+</span></span><br><span class="line"> | id   | select_type | table | type | possible_keys | key  | key_len | ref  | rows    | Extra                       |</span><br><span class="line"> +<span class="comment">------+-------------+-------+------+---------------+------+---------+------+---------+-----------------------------+</span></span><br><span class="line"> |    1 | SIMPLE      | emp   | ALL  | NULL          | NULL | NULL    | NULL | 4090000 | Using where; Using filesort |</span><br><span class="line"> +<span class="comment">------+-------------+-------+------+---------------+------+---------+------+---------+-----------------------------+</span></span><br><span class="line"> 1 row in <span class="keyword">set</span> (<span class="number">0.001</span> sec)</span><br><span class="line"></span><br><span class="line"> MariaDB [mysql_optimization]&gt; <span class="keyword">explain</span> <span class="keyword">explain</span> <span class="keyword">select</span> * <span class="keyword">from</span> emp <span class="keyword">where</span> deptno=<span class="number">3000000</span>\G</span><br><span class="line"> *************************** <span class="number">1.</span> <span class="keyword">row</span> ***************************</span><br><span class="line">            <span class="keyword">id</span>: <span class="number">1</span></span><br><span class="line">   select_type: SIMPLE</span><br><span class="line">         <span class="keyword">table</span>: emp</span><br><span class="line">          <span class="keyword">type</span>: <span class="keyword">ALL</span></span><br><span class="line"> possible_keys: <span class="literal">NULL</span></span><br><span class="line">           <span class="keyword">key</span>: <span class="literal">NULL</span></span><br><span class="line">       key_len: <span class="literal">NULL</span></span><br><span class="line">           <span class="keyword">ref</span>: <span class="literal">NULL</span></span><br><span class="line">          <span class="keyword">rows</span>: <span class="number">4090000</span></span><br><span class="line">         Extra: <span class="keyword">Using</span> <span class="keyword">where</span>; Using filesort</span><br><span class="line"> 1 row in <span class="keyword">set</span> (<span class="number">0.001</span> sec)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>使用\G显示更明显些</li>
+</ul>
+</li>
+<li>explain各字段含义 ???<ul>
+<li>id: 查询序列号</li>
+<li>select_type: 查询类型<ul>
+<li>primary: 子查询中最外层查询</li>
+<li>subquery: 子查询内层第一个select,结果不依赖于外部查询.</li>
+<li>dependent subquery: 子查询内层第一个select, 依赖于外部查询.</li>
+<li>union: union语句中第二个select开始后面所有select</li>
+<li>simple: 简单模式</li>
+<li>union result union中合并结果</li>
+</ul>
+</li>
+<li>table: 查询的表名</li>
+<li>type: 扫描的方式; <ul>
+<li>all表示全表扫描, 通常不好</li>
+<li>system: 表仅有一行(=系统表). 这是const联接类型的一个特例</li>
+<li>const: 表最多有一个匹配行</li>
+</ul>
+</li>
+<li>possible_key: 该查询可能使用到的索引,如果没有任何索引显示null</li>
+<li>key: mysql从possible_keys中所选择使用的索引</li>
+<li>key_len: 被选中使用索引的索引长度</li>
+<li>rows: 估算出结果集行数</li>
+<li>extra: sql语句的额外信息, 比如排序方式filesort<ul>
+<li>No tables: query语句中使用from dual或不含任何from子句.</li>
+<li>using filesort: 当query中包含order by操作,而且无法利用索引完成排序.(一般不好)</li>
+<li>using temporary: 某些操作必须使用临时表,常见group by; order by</li>
+<li>using where: 不用读取表中所有信息,仅通过索引就可以获取所需数据.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>分析上面那条慢查询的explain数据<ul>
+<li>type: all -&gt; 表明这条语句使用了全表扫描. 全表扫描效率很低,尽量避免</li>
+<li>possible_keys: null; key:null -&gt; 没有用到索引</li>
+<li>rows: 4090000 -&gt; 扫描了这么多行数据才能得到结果. 扫描的行数太多了</li>
+</ul>
+</li>
+</ul>
+<h4 id="四-确定问题并采取相应的优化措施"><a href="#四-确定问题并采取相应的优化措施" class="headerlink" title="四.确定问题并采取相应的优化措施"></a>四.确定问题并采取相应的优化措施</h4><ul>
+<li>没有用到索引导致全表扫描, 创建索引  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">MariaDB [mysql_optimization]&gt; create unique index my_unique on emp(empno);</span><br><span class="line">Query OK, 4090000 rows affected (5.875 sec)            </span><br><span class="line">Records: 4090000  Duplicates: 0  Warnings: 0</span><br><span class="line"></span><br><span class="line">MariaDB [mysql_optimization]&gt; explain select * from emp where empno=3000000\G</span><br><span class="line">*************************** 1. row ***************************</span><br><span class="line">           id: 1</span><br><span class="line">  select_type: SIMPLE</span><br><span class="line">        table: emp</span><br><span class="line">         type: const</span><br><span class="line">possible_keys: my_unique</span><br><span class="line">          key: my_unique</span><br><span class="line">      key_len: 3</span><br><span class="line">          ref: const</span><br><span class="line">         rows: 1</span><br><span class="line">        Extra: </span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">0.001</span> sec)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/MySQL/" rel="tag"># MySQL</a>
+          
+            <a href="/tags/MySQL优化/" rel="tag"># MySQL优化</a>
+          
+            <a href="/tags/慢查询/" rel="tag"># 慢查询</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/03/02/MySQL优化/碎片整理/" rel="next" title="MySQL碎片整理">
+                <i class="fa fa-chevron-left"></i> MySQL碎片整理
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      
+        <div id="gitment-container"></div>
+      
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">jinglingting</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">3</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#问题是-如何从一个大项目中-迅速定位执行速度慢的语句-定位慢查询"><span class="nav-text">问题是: 如何从一个大项目中, 迅速定位执行速度慢的语句(定位慢查询)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#一-通过show-status命令了解各种SQL的执行效率"><span class="nav-text">一.通过show status命令了解各种SQL的执行效率</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#show-status命令"><span class="nav-text">show status命令</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#二-定位执行效率较低的SQL语句-重点select"><span class="nav-text">二.定位执行效率较低的SQL语句(重点select)</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#开启MySQL的慢查询日志功能"><span class="nav-text">开启MySQL的慢查询日志功能</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#如何去定位慢查询"><span class="nav-text">如何去定位慢查询</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#三-通过explain分析低效率的SQL语句的执行情况"><span class="nav-text">三.通过explain分析低效率的SQL语句的执行情况</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#explain使用"><span class="nav-text">explain使用</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#四-确定问题并采取相应的优化措施"><span class="nav-text">四.确定问题并采取相应的优化措施</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">jinglingting</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.0.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+  
+  
+
+
+  
+    <!-- LOCAL: You can save these files to your site and update links -->
+
+  
+  <script src="https://cdn.jsdelivr.net/gh/theme-next/theme-next-gitment@1/gitment.browser.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/theme-next/theme-next-gitment@1/default.css">
+<!-- END LOCAL -->
+
+<style>
+#gitment-container a {
+  border-bottom: none;
+}
+
+</style>
+
+<script>
+  function renderGitment() {
+    var gitment = new Gitment({
+      id: '1551497786000',
+      owner: 'jinglingting',
+      repo: 'jinglingting.github.io',
+      
+      oauth: {
+      
+      
+        client_secret: 'e8fab2e7635ac405d9932b287cfe7a6701d7193a',
+      
+        client_id: 'a96f4382de22ae6d35f6'
+      }
+    });
+    gitment.render('gitment-container');
+  }
+
+  
+    renderGitment();
+  
+</script>
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
