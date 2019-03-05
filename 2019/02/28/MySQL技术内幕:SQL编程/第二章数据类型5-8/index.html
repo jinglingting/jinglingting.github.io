@@ -96,18 +96,18 @@
 
 
 
-  <meta name="description" content="2.5 数字类型">
+  <meta name="description" content="2.5 数字类型 2.6 关于数字的经典SQL编程问题 2.7 字符类型 2.8 小结">
 <meta name="keywords" content="MySQL,MySQL技术内幕">
 <meta property="og:type" content="article">
 <meta property="og:title" content="第二章数据类型5-8">
 <meta property="og:url" content="http://yoursite.com/2019/02/28/MySQL技术内幕:SQL编程/第二章数据类型5-8/index.html">
 <meta property="og:site_name" content="Jing">
-<meta property="og:description" content="2.5 数字类型">
+<meta property="og:description" content="2.5 数字类型 2.6 关于数字的经典SQL编程问题 2.7 字符类型 2.8 小结">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-03-01T11:35:24.461Z">
+<meta property="og:updated_time" content="2019-03-05T00:53:31.705Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="第二章数据类型5-8">
-<meta name="twitter:description" content="2.5 数字类型">
+<meta name="twitter:description" content="2.5 数字类型 2.6 关于数字的经典SQL编程问题 2.7 字符类型 2.8 小结">
 
 
 
@@ -387,7 +387,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2019-03-01 20:35:24" itemprop="dateModified" datetime="2019-03-01T20:35:24+09:00">2019-03-01</time>
+                <time title="Modified: 2019-03-05 09:53:31" itemprop="dateModified" datetime="2019-03-05T09:53:31+09:00">2019-03-05</time>
               
             
           </span>
@@ -439,8 +439,14 @@
       
 
       
-        <h4 id="2-5-数字类型"><a href="#2-5-数字类型" class="headerlink" title="2.5 数字类型"></a>2.5 数字类型</h4><a id="more"></a>
-<h5 id="2-5-1-整型"><a href="#2-5-1-整型" class="headerlink" title="2.5.1 整型"></a>2.5.1 整型</h5><ul>
+        <ul>
+<li>2.5 数字类型</li>
+<li>2.6 关于数字的经典SQL编程问题</li>
+<li>2.7 字符类型</li>
+<li>2.8 小结<a id="more"></a>
+</li>
+</ul>
+<h4 id="2-5-数字类型"><a href="#2-5-数字类型" class="headerlink" title="2.5 数字类型"></a>2.5 数字类型</h4><h5 id="2-5-1-整型"><a href="#2-5-1-整型" class="headerlink" title="2.5.1 整型"></a>2.5.1 整型</h5><ul>
 <li>mysql数据库支持sql标准支持的整型类型:int, smallint. 此外mysql数据库也支持诸如tinyint, mediumint, bigint等类型</li>
 <li>各种整型占用的存储空间以及取值范围</li>
 </ul>
@@ -612,7 +618,7 @@
 <li><p>如果需要更改当前会话的排序规则, 可以通过命令 <code>set names ... collate ...</code> 来实现</p>
   <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">MariaDB [information_schema]&gt; set names utf8mb4 collate utf8mb4_bin;</span><br><span class="line">Query OK, 0 rows affected (0.000 sec)</span><br><span class="line"></span><br><span class="line">MariaDB [information_schema]&gt; select 'a'='A';</span><br><span class="line">+<span class="comment">---------+</span></span><br><span class="line">| 'a'='A' |</span><br><span class="line">+<span class="comment">---------+</span></span><br><span class="line">|       0 |</span><br><span class="line">+<span class="comment">---------+</span></span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">0.000</span> sec)</span><br></pre></td></tr></table></figure>
 </li>
-<li><p>可以通过alter table r modify column … collate xxx_bin;来更改该列是否区分大小写</p>
+<li><p>可以通过 <code>alter table r modify column ... collate xxx_bin;</code> 来更改该列是否区分大小写</p>
 </li>
 <li>大小写敏感的需求要视应用程序的需求而定,并不总是要求区分大小写字符.<ul>
 <li>例如对于用户信息表,可能希望在用户注册时不要区分大小写,因为如果区分大小写,那么一个用户可以注册为David,另一个用户可以注册为david,并不是想要的情况</li>
@@ -630,7 +636,7 @@
 <li>varchar(N)用来保存变长字符串类型, N的范围是0~65535.</li>
 </ul>
 </li>
-<li><p>char类型的字符串, MySQL数据库会自动对存储列的右边进行填充(Right Padded)操作,知道字符串达到指定的长度N.</p>
+<li><p>char类型的字符串, MySQL数据库会自动对存储列的右边进行填充(Right Padded)操作,直到字符串达到指定的长度N.</p>
 <ul>
 <li>而在读取该列时, MySQL数据库会自动将填充的字符删除</li>
 <li>显式地将sql_mode设置为pad_char_to_full_length,会直接返回填充后的结果</li>
