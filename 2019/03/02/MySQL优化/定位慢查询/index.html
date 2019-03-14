@@ -104,7 +104,7 @@
 <meta property="og:site_name" content="Jing">
 <meta property="og:description" content="问题是: 如何从一个大项目中, 迅速定位执行速度慢的语句(定位慢查询) 一.通过show status命令了解各种SQL的执行效率 二.定位执行效率较低的SQL语句(重点select) 三.通过explain分析低效率的SQL语句的执行情况 四.确定问题并采取相应的优化措施">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-03-02T04:40:50.782Z">
+<meta property="og:updated_time" content="2019-03-14T02:28:07.454Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="MySQL定位慢查询">
 <meta name="twitter:description" content="问题是: 如何从一个大项目中, 迅速定位执行速度慢的语句(定位慢查询) 一.通过show status命令了解各种SQL的执行效率 二.定位执行效率较低的SQL语句(重点select) 三.通过explain分析低效率的SQL语句的执行情况 四.确定问题并采取相应的优化措施">
@@ -370,12 +370,24 @@
                 
               
 
-              <time title="Created: 2019-03-02 12:36:26 / Modified: 13:40:50" itemprop="dateCreated datePublished" datetime="2019-03-02T12:36:26+09:00">2019-03-02</time>
+              <time title="Created: 2019-03-02 12:36:26" itemprop="dateCreated datePublished" datetime="2019-03-02T12:36:26+09:00">2019-03-02</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2019-03-14 11:28:07" itemprop="dateModified" datetime="2019-03-14T11:28:07+09:00">2019-03-14</time>
               
             
           </span>
@@ -469,7 +481,8 @@
 </li>
 <li><p>开启数据库的慢查询</p>
 <ul>
-<li><p>vim /etc/mysq/my.cnf/server.cnf 开启慢查询日志,然后给出慢查询日志存放位置, 慢查询时长为一秒</p>
+<li>vim /etc/mysql/my.cnf/server.cnf 开启慢查询日志,然后给出慢查询日志存放位置, 慢查询时长为一秒(archlinux的配置文件目录)</li>
+<li><p>如果是centos7,配置文件目录/etc/my.cnf</p>
   <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[mysqld]</span><br><span class="line">slow_query_log=ON</span><br><span class="line">slow_query_log_file=my-arch-slow.log</span><br><span class="line">long_query_time=1</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>slow_query_long=ON开启慢查询日志功能,long_query_time=1设置慢查询时长</p>
